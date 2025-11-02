@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { generateEmbedding } from '@/lib/embeddings'
 
+// Force dynamic rendering (don't pre-render during build)
+export const dynamic = 'force-dynamic'
+
 /**
  * Model Warming Endpoint
  *
