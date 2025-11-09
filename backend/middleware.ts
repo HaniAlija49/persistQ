@@ -10,15 +10,19 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
 
     const origin = request.headers.get('origin')
 
-    // For development, allow localhost origins
-    // For production, use ALLOWED_ORIGINS env variable
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
-      'http://localhost:3001',
-      'http://localhost:3000',
-    ]
+    // Get allowed origins from env (production) or use localhost (development)
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : [
+          'http://localhost:3001',
+          'http://localhost:3000',
+          'http://127.0.0.1:3001',
+          'http://127.0.0.1:3000',
+        ]
 
     // Check if origin is allowed
-    if (origin && (allowedOrigins.includes('*') || allowedOrigins.includes(origin))) {
+    // Note: MCP servers don't send Origin header, so this only affects browser requests
+    if (origin && allowedOrigins.includes(origin)) {
       response.headers.set('Access-Control-Allow-Origin', origin)
       response.headers.set('Vary', 'Origin')
     }
@@ -41,15 +45,19 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
 
     const origin = request.headers.get('origin')
 
-    // For development, allow localhost origins
-    // For production, use ALLOWED_ORIGINS env variable
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
-      'http://localhost:3001',
-      'http://localhost:3000',
-    ]
+    // Get allowed origins from env (production) or use localhost (development)
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : [
+          'http://localhost:3001',
+          'http://localhost:3000',
+          'http://127.0.0.1:3001',
+          'http://127.0.0.1:3000',
+        ]
 
     // Check if origin is allowed
-    if (origin && (allowedOrigins.includes('*') || allowedOrigins.includes(origin))) {
+    // Note: MCP servers don't send Origin header, so this only affects browser requests
+    if (origin && allowedOrigins.includes(origin)) {
       response.headers.set('Access-Control-Allow-Origin', origin)
       response.headers.set('Vary', 'Origin')
     }
