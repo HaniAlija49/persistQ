@@ -33,9 +33,10 @@ In Clerk Dashboard:
 
 ### 1.3 Get API Keys
 1. Go to https://dashboard.clerk.com/last-active?path=api-keys
-2. Copy keys (already added to your .env files):
-   - ✅ Publishable Key: `pk_test_your_publishable_key`
-   - ✅ Secret Key: `sk_test_your_secret_key`
+2. Copy your keys:
+   - Publishable Key: `pk_test_...`
+   - Secret Key: `sk_test_...`
+3. Add these to your environment variables (see Step 2.3 and 4.3)
 
 ---
 
@@ -64,14 +65,14 @@ In Clerk Dashboard:
 In Render dashboard, add these environment variables:
 
 ```bash
-# Database (your existing Neon PostgreSQL)
+# Database (use your Neon PostgreSQL connection string)
 MEMORYHUB_DATABASE_URL=postgresql://username:password@your-host.neon.tech/database?sslmode=require
 
-# Upstash Redis (your existing Redis instance)
+# Upstash Redis (get from https://upstash.com)
 UPSTASH_REDIS_REST_URL=https://your-redis-instance.upstash.io
 UPSTASH_REDIS_REST_TOKEN=your_redis_token_here
 
-# Clerk Authentication
+# Clerk Authentication (get from https://dashboard.clerk.com)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_publishable_key
 CLERK_SECRET_KEY=sk_test_your_secret_key
 CLERK_WEBHOOK_SECRET=(get this in Step 3 after deploying)
@@ -135,12 +136,12 @@ ALLOWED_ORIGINS=*
 Add these in Vercel project settings → Environment Variables:
 
 ```bash
-# Clerk Authentication
+# Clerk Authentication (get from https://dashboard.clerk.com)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_publishable_key
 CLERK_SECRET_KEY=sk_test_your_secret_key
 
 # Backend API URL (use your Render URL from Step 2.4)
-NEXT_PUBLIC_API_URL=https://memoryhub-backend.onrender.com
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
 ```
 
 ### 4.4 Deploy
