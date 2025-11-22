@@ -4,11 +4,21 @@ import { searchMemories } from '@/lib/search'
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils'
 import { searchMemorySchema, validateRequest } from '@/lib/validation'
 import { withAppRouterHighlight } from '@/app/_utils/app-router-highlight.config'
+import { enforceQuota } from '@/lib/billing/quotas'
 
 export const POST = withAppRouterHighlight(async function POST(request: NextRequest) {
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Parse and validate request body
     const body = await request.json()

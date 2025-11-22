@@ -1,39 +1,68 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
-  binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("MEMORYHUB_DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("MEMORYHUB_DATABASE_URL")
   extensions = [vector]
 }
 
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  clerkUserId String? @unique @map("clerk_user_id")
-  apiKey     String   @unique @map("api_key")
-  apiKeyHash String?  @unique @map("api_key_hash")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id          String   @id @default(cuid())
+  email       String   @unique
+  apiKey      String   @unique @map("api_key")
+  createdAt   DateTime @default(now()) @map("created_at")
+  apiKeyHash  String?  @unique @map("api_key_hash")
+  clerkUserId String?  @unique @map("clerk_user_id")
 
-  memories Memory[]
+  // Billing fields (provider-agnostic)
+  billingProvider        String?   @map("billing_provider")
+  billingCustomerId      String?   @unique @map("billing_customer_id")
+  subscriptionId         String?   @unique @map("subscription_id")
+  planId                 String    @default("free") @map("plan_id")
+  subscriptionStatus     String?   @map("subscription_status")
+  currentPeriodEnd       DateTime? @map("current_period_end")
+  billingInterval        String?   @map("billing_interval")
+  cancelAtPeriodEnd      Boolean   @default(false) @map("cancel_at_period_end")
+
+  memories     Memory[]
+  usageRecords UsageRecord[]
 
   @@index([apiKeyHash])
+  @@index([billingCustomerId])
+  @@index([subscriptionId])
+  @@index([planId])
   @@map("users")
 }
 
-model Memory {
-  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+model UsageRecord {
+  id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  project   String?
-  content   String   @db.Text
-  embedding Unsupported("vector(384)")?
-  metadata  Json?
+  period    String
+  apiCalls  Int      @default(0) @map("api_calls")
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, period])
+  @@index([userId])
+  @@index([period])
+  @@map("usage_records")
+}
+
+model Memory {
+  id        String                 @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId    String                 @map("user_id")
+  project   String?
+  content   String
+  metadata  Json?
+  createdAt DateTime               @default(now()) @map("created_at")
+  embedding Unsupported("vector")?
+  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([project])

@@ -5,11 +5,29 @@ import { generateEmbedding } from '@/lib/embeddings'
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils'
 import { saveMemorySchema, validateRequest } from '@/lib/validation'
 import { withAppRouterHighlight } from '@/app/_utils/app-router-highlight.config'
+import { enforceQuota } from '@/lib/billing/quotas'
 
 export const POST = withAppRouterHighlight(async function POST(request: NextRequest) {
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check quotas (API call + memory storage)
+    const apiQuotaError = await enforceQuota(user.id, 'api_call')
+    if (apiQuotaError) {
+      return NextResponse.json(
+        { error: apiQuotaError.error, usage: apiQuotaError.usage },
+        { status: apiQuotaError.status }
+      )
+    }
+
+    const memoryQuotaError = await enforceQuota(user.id, 'memory')
+    if (memoryQuotaError) {
+      return NextResponse.json(
+        { error: memoryQuotaError.error, usage: memoryQuotaError.usage },
+        { status: memoryQuotaError.status }
+      )
+    }
 
     // Parse and validate request body
     const body = await request.json()

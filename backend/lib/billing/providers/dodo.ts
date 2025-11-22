@@ -1,0 +1,421 @@
+/**
+ * Dodo Payments Provider Implementation
+ *
+ * Implements IBillingProvider interface for Dodo Payments.
+ * Uses the @dodopayments/nextjs adapter for checkout and portal sessions.
+ */
+
+import { Webhook } from "standardwebhooks";
+import { getPlanIdFromProductId, getProviderProductId } from "../../config/plans";
+import type {
+  BillingEvent,
+  CheckoutSession,
+  CreateCheckoutSessionParams,
+  CreatePortalSessionParams,
+  IBillingProvider,
+  PaymentData,
+  PortalSession,
+  SubscriptionData,
+  SubscriptionStatus,
+} from "../types";
+
+// ============================================================================
+// Dodo API Client
+// ============================================================================
+
+interface DodoConfig {
+  apiKey: string;
+  webhookSecret: string;
+  mode: "test" | "live";
+}
+
+class DodoAPIClient {
+  private apiKey: string;
+  private baseUrl: string;
+
+  constructor(apiKey: string, mode: "test" | "live") {
+    this.apiKey = apiKey;
+    this.baseUrl =
+      mode === "live"
+        ? "https://api.dodopayments.com"
+        : "https://api.dodopayments.com/test";
+  }
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Dodo API error: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+
+    return response.json();
+  }
+
+  async createCheckoutSession(params: {
+    productId: string;
+    customerId?: string;
+    customerEmail?: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, string>;
+  }): Promise<{ url: string; sessionId: string }> {
+    const response = await this.request<{ checkout_url: string; id: string }>(
+      "/v1/checkout/sessions",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          product_id: params.productId,
+          customer_id: params.customerId,
+          customer_email: params.customerEmail,
+          success_url: params.successUrl,
+          cancel_url: params.cancelUrl,
+          metadata: params.metadata,
+        }),
+      }
+    );
+
+    return {
+      url: response.checkout_url,
+      sessionId: response.id,
+    };
+  }
+
+  async createPortalSession(params: {
+    customerId: string;
+    returnUrl: string;
+  }): Promise<{ url: string }> {
+    const response = await this.request<{ portal_url: string }>(
+      "/v1/portal/sessions",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          customer_id: params.customerId,
+          return_url: params.returnUrl,
+        }),
+      }
+    );
+
+    return { url: response.portal_url };
+  }
+
+  async getSubscription(
+    subscriptionId: string
+  ): Promise<{
+    id: string;
+    customer_id: string;
+    product_id: string;
+    status: string;
+    current_period_start: number;
+    current_period_end: number;
+    cancel_at_period_end: boolean;
+    billing_interval: string;
+    amount: number;
+    currency: string;
+  }> {
+    return this.request(`/v1/subscriptions/${subscriptionId}`, {
+      method: "GET",
+    });
+  }
+
+  async cancelSubscription(
+    subscriptionId: string,
+    immediate: boolean = false
+  ): Promise<any> {
+    return this.request(`/v1/subscriptions/${subscriptionId}`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        immediate,
+      }),
+    });
+  }
+
+  async updateSubscription(
+    subscriptionId: string,
+    newProductId: string
+  ): Promise<any> {
+    return this.request(`/v1/subscriptions/${subscriptionId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        product_id: newProductId,
+      }),
+    });
+  }
+}
+
+// ============================================================================
+// Dodo Provider
+// ============================================================================
+
+export class DodoProvider implements IBillingProvider {
+  readonly name = "dodo";
+  private client: DodoAPIClient;
+  private webhookSecret: string;
+
+  constructor(config: DodoConfig) {
+    this.client = new DodoAPIClient(config.apiKey, config.mode);
+    this.webhookSecret = config.webhookSecret;
+  }
+
+  async createCheckoutSession(
+    params: CreateCheckoutSessionParams
+  ): Promise<CheckoutSession> {
+    // Get Dodo product ID from our plan configuration
+    const productId = getProviderProductId(
+      params.planId,
+      "dodo",
+      params.interval
+    );
+
+    if (!productId) {
+      throw new Error(
+        `No Dodo product ID configured for plan ${params.planId} with interval ${params.interval}`
+      );
+    }
+
+    const session = await this.client.createCheckoutSession({
+      productId,
+      customerEmail: params.userEmail,
+      successUrl: params.successUrl,
+      cancelUrl: params.cancelUrl,
+      metadata: {
+        userId: params.userId,
+        planId: params.planId,
+        interval: params.interval,
+        ...params.metadata,
+      },
+    });
+
+    return session;
+  }
+
+  async createPortalSession(
+    params: CreatePortalSessionParams
+  ): Promise<PortalSession> {
+    return this.client.createPortalSession({
+      customerId: params.customerId,
+      returnUrl: params.returnUrl,
+    });
+  }
+
+  async getSubscription(subscriptionId: string): Promise<SubscriptionData> {
+    const sub = await this.client.getSubscription(subscriptionId);
+
+    // Map Dodo product ID back to our plan ID
+    const planInfo = getPlanIdFromProductId("dodo", sub.product_id);
+
+    return {
+      id: sub.id,
+      customerId: sub.customer_id,
+      planId: planInfo?.planId || "free",
+      status: this.normalizeDodoStatus(sub.status),
+      currentPeriodStart: new Date(sub.current_period_start * 1000),
+      currentPeriodEnd: new Date(sub.current_period_end * 1000),
+      cancelAtPeriodEnd: sub.cancel_at_period_end,
+      interval: (planInfo?.interval || "monthly") as "monthly" | "yearly",
+      amount: sub.amount,
+      currency: sub.currency,
+    };
+  }
+
+  async cancelSubscription(
+    subscriptionId: string,
+    immediate?: boolean
+  ): Promise<SubscriptionData> {
+    await this.client.cancelSubscription(subscriptionId, immediate);
+    return this.getSubscription(subscriptionId);
+  }
+
+  async updateSubscription(
+    subscriptionId: string,
+    newPlanId: string,
+    newInterval: "monthly" | "yearly"
+  ): Promise<SubscriptionData> {
+    const newProductId = getProviderProductId(newPlanId, "dodo", newInterval);
+
+    if (!newProductId) {
+      throw new Error(
+        `No Dodo product ID configured for plan ${newPlanId} with interval ${newInterval}`
+      );
+    }
+
+    await this.client.updateSubscription(subscriptionId, newProductId);
+    return this.getSubscription(subscriptionId);
+  }
+
+  async verifyWebhook(
+    payload: string | Buffer,
+    signature: string,
+    secret: string
+  ): Promise<BillingEvent> {
+    const webhook = new Webhook(secret);
+
+    // Extract webhook headers from signature (Standard Webhooks format)
+    // The signature parameter should contain all three headers separated by commas
+    const headers: Record<string, string> = {};
+
+    // For Dodo webhooks, we expect the signature to be passed as a string
+    // containing all three required headers
+    if (typeof signature === "string") {
+      headers["webhook-signature"] = signature;
+    }
+
+    try {
+      // Verify the webhook signature
+      const rawPayload = typeof payload === "string" ? payload : payload.toString();
+      await webhook.verify(rawPayload, headers as any);
+
+      // Parse the event
+      const event = JSON.parse(rawPayload);
+
+      // Normalize the event to our standard format
+      return this.normalizeDodoEvent(event);
+    } catch (error) {
+      throw new Error(
+        `Webhook verification failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  // ============================================================================
+  // Private Helper Methods
+  // ============================================================================
+
+  private normalizeDodoStatus(dodoStatus: string): SubscriptionStatus {
+    const statusMap: Record<string, SubscriptionStatus> = {
+      active: "active",
+      trialing: "trialing",
+      past_due: "past_due",
+      canceled: "canceled",
+      cancelled: "canceled", // UK spelling
+      paused: "paused",
+      on_hold: "past_due",
+      incomplete: "incomplete",
+      incomplete_expired: "incomplete_expired",
+    };
+
+    return statusMap[dodoStatus.toLowerCase()] || "canceled";
+  }
+
+  private normalizeDodoEvent(dodoEvent: any): BillingEvent {
+    const eventType = dodoEvent.event || dodoEvent.type;
+
+    switch (eventType) {
+      case "subscription.created":
+      case "subscription.active":
+        return {
+          type: "subscription.created",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "subscription.updated":
+      case "subscription.plan_changed":
+        return {
+          type: "subscription.updated",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "subscription.canceled":
+      case "subscription.cancelled":
+        return {
+          type: "subscription.canceled",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "subscription.paused":
+      case "subscription.on_hold":
+        return {
+          type: "subscription.paused",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "payment.succeeded":
+        return {
+          type: "payment.succeeded",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id,
+          data: this.normalizePaymentData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "payment.failed":
+        return {
+          type: "payment.failed",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id,
+          data: this.normalizePaymentData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      default:
+        throw new Error(`Unknown Dodo event type: ${eventType}`);
+    }
+  }
+
+  private normalizeSubscriptionData(dodoSub: any): SubscriptionData {
+    const planInfo = getPlanIdFromProductId("dodo", dodoSub.product_id);
+
+    return {
+      id: dodoSub.id,
+      customerId: dodoSub.customer_id,
+      planId: planInfo?.planId || "free",
+      status: this.normalizeDodoStatus(dodoSub.status),
+      currentPeriodStart: new Date(dodoSub.current_period_start * 1000),
+      currentPeriodEnd: new Date(dodoSub.current_period_end * 1000),
+      cancelAtPeriodEnd: dodoSub.cancel_at_period_end || false,
+      interval: (planInfo?.interval || "monthly") as "monthly" | "yearly",
+      amount: dodoSub.amount || 0,
+      currency: dodoSub.currency || "usd",
+    };
+  }
+
+  private normalizePaymentData(dodoPayment: any): PaymentData {
+    return {
+      id: dodoPayment.id,
+      customerId: dodoPayment.customer_id,
+      subscriptionId: dodoPayment.subscription_id,
+      amount: dodoPayment.amount || 0,
+      currency: dodoPayment.currency || "usd",
+      status: dodoPayment.status === "succeeded" ? "succeeded" : "failed",
+      failureReason: dodoPayment.failure_reason,
+      createdAt: new Date(dodoPayment.created || Date.now()),
+    };
+  }
+}

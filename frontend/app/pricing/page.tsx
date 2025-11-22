@@ -4,9 +4,45 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Check, X, ArrowRight, Database } from "lucide-react"
+import { useAuth } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 
 export default function PricingPage() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
+  const [isLoading, setIsLoading] = useState<string | null>(null)
+  const { isSignedIn } = useAuth()
+  const router = useRouter()
+
+  const handleCheckout = async (planId: string, interval: "monthly" | "yearly") => {
+    // Redirect to signup if not authenticated
+    if (!isSignedIn) {
+      router.push("/signup")
+      return
+    }
+
+    setIsLoading(`${planId}-${interval}`)
+
+    try {
+      const response = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, interval }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create checkout session")
+      }
+
+      // Redirect to Dodo checkout
+      window.location.href = data.url
+    } catch (error) {
+      console.error("Checkout error:", error)
+      alert(error instanceof Error ? error.message : "Failed to start checkout. Please try again.")
+      setIsLoading(null)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,11 +164,13 @@ export default function PricingPage() {
                 <p className="text-xs text-accent-cyan mt-1">Save $10/year</p>
               )}
             </div>
-            <Link href="/signup">
-              <Button className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get started
-              </Button>
-            </Link>
+            <Button
+              className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black"
+              onClick={() => handleCheckout("starter", billingPeriod)}
+              disabled={isLoading === `starter-${billingPeriod}`}
+            >
+              {isLoading === `starter-${billingPeriod}` ? "Loading..." : "Get started"}
+            </Button>
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />
@@ -180,11 +218,13 @@ export default function PricingPage() {
                 <p className="text-xs text-accent-cyan mt-1">Save $24/year</p>
               )}
             </div>
-            <Link href="/signup">
-              <Button className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get started
-              </Button>
-            </Link>
+            <Button
+              className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black"
+              onClick={() => handleCheckout("pro", billingPeriod)}
+              disabled={isLoading === `pro-${billingPeriod}`}
+            >
+              {isLoading === `pro-${billingPeriod}` ? "Loading..." : "Get started"}
+            </Button>
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />
@@ -229,11 +269,13 @@ export default function PricingPage() {
                 <p className="text-xs text-accent-cyan mt-1">Save $58/year</p>
               )}
             </div>
-            <Link href="/signup">
-              <Button className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get started
-              </Button>
-            </Link>
+            <Button
+              className="w-full mb-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black"
+              onClick={() => handleCheckout("premium", billingPeriod)}
+              disabled={isLoading === `premium-${billingPeriod}`}
+            >
+              {isLoading === `premium-${billingPeriod}`  ? "Loading..." : "Get started"}
+            </Button>
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />
