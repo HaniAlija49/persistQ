@@ -32,33 +32,33 @@ const originalConsoleWarn = console.warn
 export function enableHighlightLogging() {
   if (!isProduction) return // Skip in development
 
-  console.log = (...args: any[]) => {
+  console.log = (...args: unknown[]) => {
     originalConsoleLog(...args)
     try {
-      H.log('info', ...args)
+      H.log('info', args.join(' '))
     } catch (e) {
       // Fail silently if Highlight not ready
     }
   }
 
-  console.error = (...args: any[]) => {
+  console.error = (...args: unknown[]) => {
     originalConsoleError(...args)
     try {
       // If first arg is an Error object, use consumeError
       if (args[0] instanceof Error) {
         H.consumeError(args[0], args.slice(1).join(' '))
       } else {
-        H.log('error', ...args)
+        H.log('error', args.join(' '))
       }
     } catch (e) {
       // Fail silently if Highlight not ready
     }
   }
 
-  console.warn = (...args: any[]) => {
+  console.warn = (...args: unknown[]) => {
     originalConsoleWarn(...args)
     try {
-      H.log('warn', ...args)
+      H.log('warn', args.join(' '))
     } catch (e) {
       // Fail silently if Highlight not ready
     }
