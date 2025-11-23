@@ -109,9 +109,8 @@ export const PLANS: Record<string, PlanMetadata> = {
     ],
     providers: {
       dodo: {
-        // TODO: Replace with actual Dodo product IDs from dashboard
-        monthly: "pdt_starter_monthly",
-        yearly: "pdt_starter_yearly",
+        monthly: "pdt_LEfuxMLpqXftMdl2jXL4d",
+        yearly: "pdt_hqU4rsdHUNC1WQXu8zv84",
       },
       // stripe: {
       //   monthly: "price_xxx",
@@ -149,9 +148,8 @@ export const PLANS: Record<string, PlanMetadata> = {
     recommended: true,
     providers: {
       dodo: {
-        // TODO: Replace with actual Dodo product IDs from dashboard
-        monthly: "pdt_pro_monthly",
-        yearly: "pdt_pro_yearly",
+        monthly: "pdt_vHY6aM1pRkyaWlOpa7jXm",
+        yearly: "pdt_6t2RgwiZIj66AhODVInwa",
       },
     },
   },
@@ -186,9 +184,8 @@ export const PLANS: Record<string, PlanMetadata> = {
     ],
     providers: {
       dodo: {
-        // TODO: Replace with actual Dodo product IDs from dashboard
-        monthly: "pdt_premium_monthly",
-        yearly: "pdt_premium_yearly",
+        monthly: "pdt_gVSrgAFcOWaErAvdQglFr",
+        yearly: "pdt_NUWmE7JuWEo4TUykkaic4",
       },
     },
   },
