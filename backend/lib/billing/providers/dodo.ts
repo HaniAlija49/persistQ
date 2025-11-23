@@ -366,10 +366,10 @@ export class DodoProvider implements IBillingProvider {
         return {
           type: "payment.succeeded",
           provider: "dodo",
-          customerId: dodoEvent.data.customer_id,
-          subscriptionId: dodoEvent.data.subscription_id,
+          customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id || undefined,
           data: this.normalizePaymentData(dodoEvent.data),
-          timestamp: new Date(dodoEvent.created || Date.now()),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created || Date.now()),
           rawEvent: dodoEvent,
         };
 
@@ -377,10 +377,10 @@ export class DodoProvider implements IBillingProvider {
         return {
           type: "payment.failed",
           provider: "dodo",
-          customerId: dodoEvent.data.customer_id,
-          subscriptionId: dodoEvent.data.subscription_id,
+          customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id || undefined,
           data: this.normalizePaymentData(dodoEvent.data),
-          timestamp: new Date(dodoEvent.created || Date.now()),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created || Date.now()),
           rawEvent: dodoEvent,
         };
 
@@ -416,14 +416,14 @@ export class DodoProvider implements IBillingProvider {
 
   private normalizePaymentData(dodoPayment: any): PaymentData {
     return {
-      id: dodoPayment.id,
-      customerId: dodoPayment.customer_id,
-      subscriptionId: dodoPayment.subscription_id,
-      amount: dodoPayment.amount || 0,
-      currency: dodoPayment.currency || "usd",
+      id: dodoPayment.payment_id || dodoPayment.id,
+      customerId: dodoPayment.customer?.customer_id || dodoPayment.customer_id,
+      subscriptionId: dodoPayment.subscription_id || undefined,
+      amount: dodoPayment.total_amount || dodoPayment.amount || 0,
+      currency: (dodoPayment.currency || "usd").toLowerCase(),
       status: dodoPayment.status === "succeeded" ? "succeeded" : "failed",
-      failureReason: dodoPayment.failure_reason,
-      createdAt: new Date(dodoPayment.created || Date.now()),
+      failureReason: dodoPayment.error_message || dodoPayment.failure_reason,
+      createdAt: new Date(dodoPayment.created_at || dodoPayment.created || Date.now()),
     };
   }
 }
