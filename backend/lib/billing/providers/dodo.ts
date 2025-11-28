@@ -304,7 +304,7 @@ export class DodoProvider implements IBillingProvider {
   }
 
   private normalizeDodoEvent(dodoEvent: any): BillingEvent {
-    const eventType = dodoEvent.event || dodoEvent.type;
+    const eventType = dodoEvent.type || dodoEvent.event;
 
     switch (eventType) {
       case "subscription.created":
@@ -313,9 +313,9 @@ export class DodoProvider implements IBillingProvider {
           type: "subscription.created",
           provider: "dodo",
           customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
-          subscriptionId: dodoEvent.data.subscription_id || dodoEvent.data.id,
+          subscriptionId: dodoEvent.data.subscription_id,
           data: this.normalizeSubscriptionData(dodoEvent.data),
-          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created || Date.now()),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created_at || dodoEvent.created || Date.now()),
           rawEvent: dodoEvent,
         };
 
@@ -393,8 +393,11 @@ export class DodoProvider implements IBillingProvider {
       return new Date();
     };
 
+    // Extract subscription ID - it might be subscription_id, id, or we generate a fallback
+    const subscriptionId = dodoSub.subscription_id || dodoSub.id || `sub_${dodoSub.customer?.customer_id}_${Date.now()}`;
+
     return {
-      id: dodoSub.subscription_id || dodoSub.id,
+      id: subscriptionId,
       customerId: dodoSub.customer?.customer_id || dodoSub.customer_id,
       planId: planInfo?.planId || "free",
       status: this.normalizeDodoStatus(dodoSub.status),

@@ -63,6 +63,15 @@ export async function POST(request: Request) {
     // Get provider and verify webhook
     const provider = getBillingProvider();
 
+    // Parse the payload to log it
+    let parsedPayload;
+    try {
+      parsedPayload = JSON.parse(rawBody);
+      console.log("[Webhook] Parsed payload:", JSON.stringify(parsedPayload, null, 2));
+    } catch (e) {
+      console.error("[Webhook] Failed to parse payload for logging");
+    }
+
     let billingEvent;
     try {
       console.log("[Webhook] Attempting to verify signature...");
@@ -74,6 +83,7 @@ export async function POST(request: Request) {
         webhookSecret
       );
       console.log("[Webhook] Signature verified successfully");
+      console.log("[Webhook] Normalized event:", JSON.stringify(billingEvent, null, 2));
     } catch (error) {
       console.error(
         "[Webhook] Signature verification failed:",
