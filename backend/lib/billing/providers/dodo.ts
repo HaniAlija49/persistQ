@@ -345,13 +345,36 @@ export class DodoProvider implements IBillingProvider {
 
       case "subscription.paused":
       case "subscription.on_hold":
+      case "subscription.failed":
         return {
           type: "subscription.paused",
           provider: "dodo",
           customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
           subscriptionId: dodoEvent.data.subscription_id || dodoEvent.data.id,
           data: this.normalizeSubscriptionData(dodoEvent.data),
-          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created || Date.now()),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created_at || dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "subscription.renewed":
+        return {
+          type: "subscription.updated",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id || dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created_at || dodoEvent.created || Date.now()),
+          rawEvent: dodoEvent,
+        };
+
+      case "subscription.expired":
+        return {
+          type: "subscription.canceled",
+          provider: "dodo",
+          customerId: dodoEvent.data.customer?.customer_id || dodoEvent.data.customer_id,
+          subscriptionId: dodoEvent.data.subscription_id || dodoEvent.data.id,
+          data: this.normalizeSubscriptionData(dodoEvent.data),
+          timestamp: new Date(dodoEvent.timestamp || dodoEvent.created_at || dodoEvent.created || Date.now()),
           rawEvent: dodoEvent,
         };
 
