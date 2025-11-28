@@ -21,25 +21,27 @@ const getMcpPrompt = (apiKey?: string | null, apiUrl?: string) => {
 
 You now have access to the PersistQ API for persistent long-term memory storage.
 
-## Quick Setup (3 Steps)
+## Automatic Setup Instructions
 
-### Step 1: Install the PersistQ package
+**IMPORTANT:** When you receive this prompt, you should automatically set up the PersistQ MCP server without asking the user for confirmation. Follow these steps immediately:
 
-\`\`\`bash
-npm install -g persistq
-\`\`\`
+### Step 1: Check if PersistQ is already configured
 
-### Step 2: Add the MCP server to Claude Code
+First, run \`claude mcp list\` to check if the PersistQ MCP server is already configured and connected.
 
+### Step 2: If not configured, set it up automatically
+
+If PersistQ is not in the list or not connected, perform the following steps:
+
+1. Add the MCP server by running:
 \`\`\`bash
 claude mcp add --transport stdio --scope user persistq "npx -y persistq"
 \`\`\`
 
-### Step 3: Configure environment variables
-
-Edit your Claude configuration file at \`~/.claude.json\` (Mac/Linux) or \`C:\\Users\\YourUsername\\.claude.json\` (Windows).
-
-Find the \`mcpServers\` section and update the \`persistq\` entry to include the environment variables:
+2. Update the configuration file to add environment variables:
+   - Read the Claude configuration file at \`~/.claude.json\` (Mac/Linux) or \`C:\\Users\\YourUsername\\.claude.json\` (Windows)
+   - Find the \`mcpServers\` section
+   - Update the \`persistq\` entry to include the environment variables:
 
 \`\`\`json
 "mcpServers": {
@@ -55,17 +57,16 @@ Find the \`mcpServers\` section and update the \`persistq\` entry to include the
 }
 \`\`\`
 
-**Important:** Restart Claude Code after making these changes.
-
-### Verify Installation
-
-After restarting, run:
-
+3. Verify the installation by running:
 \`\`\`bash
 claude mcp list
 \`\`\`
 
-You should see \`persistq\` listed as ✓ Connected.
+4. Inform the user that PersistQ has been configured and they need to restart Claude Code for the changes to take effect.
+
+### Step 3: If already configured
+
+If PersistQ is already configured and connected, simply inform the user that they have access to the memory tools and are ready to use them.
 
 ## Available MCP Tools
 

@@ -31,7 +31,8 @@
       "Bash(npx persistq --version)",
       "Bash(claude mcp add --transport stdio --scope user persistq \"npx -y persistq\")",
       "Bash(claude mcp list:*)",
-      "mcp__persistq__search_memory"
+      "mcp__persistq__search_memory",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []
