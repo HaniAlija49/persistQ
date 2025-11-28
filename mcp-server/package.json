@@ -1,9 +1,12 @@
 {
-  "name": "persistq-mcp-server",
+  "name": "persistq",
   "version": "1.0.0",
-  "description": "MCP Server for PersistQ - Persistent Memory Management",
+  "description": "MCP Server for PersistQ - Persistent Memory Management for Claude Code and AI assistants",
   "main": "pq-mcp-server.js",
   "type": "commonjs",
+  "bin": {
+    "persistq": "./pq-mcp-server.js"
+  },
   "scripts": {
     "start": "node pq-mcp-server.js",
     "dev": "node pq-mcp-server.js"
@@ -15,10 +18,21 @@
   "keywords": [
     "persistq",
     "mcp",
+    "mcp-server",
     "memory",
     "claude",
-    "ai"
+    "ai",
+    "model-context-protocol",
+    "claude-code",
+    "memory-management"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "pq-mcp-server.js",
+    "README.md"
+  ]
 }

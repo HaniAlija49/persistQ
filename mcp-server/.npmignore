@@ -1,0 +1,32 @@
+# Development files
+node_modules/
+.git/
+.gitignore
+.env
+.env.*
+
+# Testing and development
+*.test.js
+test/
+tests/
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.npmrc

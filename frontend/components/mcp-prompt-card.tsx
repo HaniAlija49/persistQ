@@ -21,10 +21,54 @@ const getMcpPrompt = (apiKey?: string | null, apiUrl?: string) => {
 
 You now have access to the PersistQ API for persistent long-term memory storage.
 
-## API Endpoint
+## Installation (Recommended)
+
+Install the official PersistQ MCP server package:
+
+\`\`\`bash
+npx persistq
+\`\`\`
+
+Or install globally:
+
+\`\`\`bash
+npm install -g persistq
+persistq
+\`\`\`
+
+### Claude Code Configuration
+
+Add to your Claude Code MCP configuration (~/.claude/mcp.json):
+
+\`\`\`json
+{
+  "mcpServers": {
+    "persistq": {
+      "command": "npx",
+      "args": ["-y", "persistq"],
+      "env": {
+        "PERSISTQ_URL": "${baseUrl}",
+        "PERSISTQ_API_KEY": "${key}"
+      }
+    }
+  }
+}
+\`\`\`
+
+This will give you access to these MCP tools:
+- add_memory: Store new memories
+- search_memory: Semantic search across memories
+- list_memories: List memories by project/tag
+- get_memory_stats: View storage statistics
+
+## Direct API Access (Alternative)
+
+If you prefer to use the HTTP API directly:
+
+### API Endpoint
 ${baseUrl}
 
-## Authentication
+### Authentication
 All requests must include the API key in the Authorization header:
 Authorization: Bearer ${key}
 
