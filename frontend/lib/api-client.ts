@@ -279,6 +279,61 @@ export class MemoryHubClient {
       method: 'GET',
     })
   }
+
+  /**
+   * Get billing subscription and usage data
+   */
+  async getBilling(): Promise<ApiResponse<any>> {
+    return this.request('/api/billing/subscription', {
+      method: 'GET',
+    }, true) // Use Clerk auth
+  }
+
+  /**
+   * Create checkout session for plan purchase
+   */
+  async createCheckout(
+    planId: string,
+    interval: 'monthly' | 'yearly'
+  ): Promise<ApiResponse<{ url: string; sessionId: string }>> {
+    return this.request('/api/billing/checkout', {
+      method: 'POST',
+      body: JSON.stringify({ planId, interval }),
+    }, true)
+  }
+
+  /**
+   * Update subscription (upgrade/downgrade)
+   */
+  async updateSubscription(
+    planId: string,
+    interval: 'monthly' | 'yearly'
+  ): Promise<ApiResponse<any>> {
+    return this.request('/api/billing/subscription', {
+      method: 'POST',
+      body: JSON.stringify({ planId, interval }),
+    }, true)
+  }
+
+  /**
+   * Cancel subscription
+   */
+  async cancelSubscription(immediate: boolean = false): Promise<ApiResponse<any>> {
+    return this.request(
+      `/api/billing/subscription?immediate=${immediate}`,
+      { method: 'DELETE' },
+      true
+    )
+  }
+
+  /**
+   * Get customer portal URL
+   */
+  async getPortalUrl(): Promise<ApiResponse<{ url: string }>> {
+    return this.request('/api/billing/portal', {
+      method: 'GET',
+    }, true)
+  }
 }
 
 /**
