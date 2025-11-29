@@ -112,14 +112,18 @@ export async function POST(request: Request) {
 
     // Return checkout URL
     return NextResponse.json({
-      url: checkoutSession.url,
-      sessionId: checkoutSession.sessionId,
+      status: "success",
+      data: {
+        url: checkoutSession.url,
+        sessionId: checkoutSession.sessionId,
+      },
     });
   } catch (error) {
     console.error("[Billing] Checkout error:", error);
 
     return NextResponse.json(
       {
+        status: "error",
         error:
           error instanceof Error ? error.message : "Failed to create checkout session",
       },

@@ -67,6 +67,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
+        status: "error",
         error:
           error instanceof Error
             ? error.message

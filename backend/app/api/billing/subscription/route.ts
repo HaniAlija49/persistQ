@@ -67,34 +67,37 @@ export async function GET(request: Request) {
 
     // Return subscription data
     return NextResponse.json({
-      subscription: {
-        planId: user.planId,
-        planName: plan.name,
-        status: user.subscriptionStatus || "active",
-        interval: user.billingInterval,
-        currentPeriodEnd: user.currentPeriodEnd,
-        cancelAtPeriodEnd: user.cancelAtPeriodEnd,
-      },
-      plan: {
-        id: plan.id,
-        name: plan.name,
-        description: plan.description,
-        limits: plan.limits,
-        pricing: plan.pricing,
-        features: plan.features,
-      },
-      usage: {
-        apiCalls: {
-          used: apiCallsUsed,
-          limit: plan.limits.apiCallsPerMonth,
-          percentage: Math.round(
-            (apiCallsUsed / plan.limits.apiCallsPerMonth) * 100
-          ),
+      status: "success",
+      data: {
+        subscription: {
+          planId: user.planId,
+          planName: plan.name,
+          status: user.subscriptionStatus || "active",
+          interval: user.billingInterval,
+          currentPeriodEnd: user.currentPeriodEnd,
+          cancelAtPeriodEnd: user.cancelAtPeriodEnd,
         },
-        memories: {
-          used: memoriesUsed,
-          limit: plan.limits.maxMemories,
-          percentage: Math.round((memoriesUsed / plan.limits.maxMemories) * 100),
+        plan: {
+          id: plan.id,
+          name: plan.name,
+          description: plan.description,
+          limits: plan.limits,
+          pricing: plan.pricing,
+          features: plan.features,
+        },
+        usage: {
+          apiCalls: {
+            used: apiCallsUsed,
+            limit: plan.limits.apiCallsPerMonth,
+            percentage: Math.round(
+              (apiCallsUsed / plan.limits.apiCallsPerMonth) * 100
+            ),
+          },
+          memories: {
+            used: memoriesUsed,
+            limit: plan.limits.maxMemories,
+            percentage: Math.round((memoriesUsed / plan.limits.maxMemories) * 100),
+          },
         },
       },
     });
@@ -103,6 +106,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
+        status: "error",
         error:
           error instanceof Error
             ? error.message
@@ -186,14 +190,18 @@ export async function POST(request: Request) {
 
     // Return updated subscription
     return NextResponse.json({
-      subscription: updatedSubscription,
-      message: "Subscription updated successfully",
+      status: "success",
+      data: {
+        subscription: updatedSubscription,
+        message: "Subscription updated successfully",
+      },
     });
   } catch (error) {
     console.error("[Billing] Update subscription error:", error);
 
     return NextResponse.json(
       {
+        status: "error",
         error:
           error instanceof Error
             ? error.message
@@ -257,16 +265,20 @@ export async function DELETE(request: Request) {
 
     // Return canceled subscription
     return NextResponse.json({
-      subscription: canceledSubscription,
-      message: immediate
-        ? "Subscription canceled immediately"
-        : "Subscription will be canceled at the end of the billing period",
+      status: "success",
+      data: {
+        subscription: canceledSubscription,
+        message: immediate
+          ? "Subscription canceled immediately"
+          : "Subscription will be canceled at the end of the billing period",
+      },
     });
   } catch (error) {
     console.error("[Billing] Cancel subscription error:", error);
 
     return NextResponse.json(
       {
+        status: "error",
         error:
           error instanceof Error
             ? error.message

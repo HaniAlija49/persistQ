@@ -51,6 +51,25 @@ export default function BillingPage() {
   const handleChangePlan = async (planId: string, interval: 'monthly' | 'yearly') => {
     setIsActionLoading(true)
 
+    // If user is on free plan, redirect to checkout instead of updating
+    if (billingData?.subscription.planId === 'free') {
+      const checkout = await BillingService.createCheckout(planId, interval)
+
+      if (checkout?.url) {
+        // Redirect to checkout page
+        window.location.href = checkout.url
+      } else {
+        toast({
+          title: "Checkout Failed",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive",
+        })
+        setIsActionLoading(false)
+      }
+      return
+    }
+
+    // For existing subscribers, update the plan
     const result = await BillingService.updatePlan(planId, interval)
 
     if (result.success) {
