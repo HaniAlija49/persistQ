@@ -36,7 +36,10 @@
       "mcp__persistq__list_memories",
       "Bash(find:*)",
       "mcp__persistq__add_memory",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npx prisma studio:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

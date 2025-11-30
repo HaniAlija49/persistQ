@@ -25,6 +25,31 @@ export default function BillingPage() {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [isActionLoading, setIsActionLoading] = useState(false)
 
+  // Check for success redirect from checkout
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const success = params.get('success')
+      const subscriptionId = params.get('subscription_id')
+      const status = params.get('status')
+
+      if (success === 'true' && subscriptionId) {
+        toast({
+          title: "Payment Successful!",
+          description: `Your subscription is now ${status || 'active'}. Your plan will be updated shortly.`,
+        })
+
+        // Clean up URL
+        window.history.replaceState({}, '', '/dashboard/billing')
+
+        // Reload billing data after a short delay to allow webhook processing
+        setTimeout(() => {
+          loadBillingData()
+        }, 2000)
+      }
+    }
+  }, [])
+
   // Load billing data
   useEffect(() => {
     if (api.isReady) {

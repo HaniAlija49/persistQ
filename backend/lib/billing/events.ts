@@ -27,18 +27,39 @@ export async function handleSubscriptionCreated(
     `[Billing] Subscription created: ${data.id} for customer ${event.customerId}`
   );
 
-  // Find user by billing customer ID
-  const user = await prisma.user.findUnique({
+  // Find user by billing customer ID or by metadata
+  let user = await prisma.user.findUnique({
     where: { billingCustomerId: event.customerId },
   });
 
+  // If not found by customer ID, try to find by metadata (for first-time subscribers)
+  if (!user && event.rawEvent?.metadata) {
+    const metadata = event.rawEvent.metadata;
+    const userId = metadata.userId || metadata.user_id;
+    const clerkUserId = metadata.clerkUserId || metadata.clerk_user_id;
+
+    console.log(`[Billing] Trying to find user by metadata:`, { userId, clerkUserId });
+
+    if (userId) {
+      user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+    } else if (clerkUserId) {
+      user = await prisma.user.findUnique({
+        where: { clerkUserId: clerkUserId },
+      });
+    }
+  }
+
   if (!user) {
-    // Try to find by subscription metadata if available
-    console.warn(
-      `[Billing] No user found for customer ${event.customerId}, subscription ${data.id}`
+    console.error(
+      `[Billing] No user found for customer ${event.customerId}, subscription ${data.id}, metadata:`,
+      event.rawEvent?.metadata
     );
     return;
   }
+
+  console.log(`[Billing] Found user ${user.id} (${user.email}) for subscription ${data.id}`);
 
   // Update user with subscription details
   await prisma.user.update({

@@ -102,7 +102,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const successUrl = `${appUrl}/dashboard/billing?success=true&session_id={CHECKOUT_SESSION_ID}`;
+    // Dodo automatically appends subscription_id and status to the return URL
+    const successUrl = `${appUrl}/dashboard/billing?success=true`;
     const cancelUrl = `${appUrl}/pricing?canceled=true`;
 
     // Create checkout session
