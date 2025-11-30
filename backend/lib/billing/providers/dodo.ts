@@ -150,10 +150,13 @@ class DodoAPIClient {
     subscriptionId: string,
     immediate: boolean = false
   ): Promise<any> {
+    // Dodo uses PATCH with cancel_at_next_billing_date parameter
+    // Setting it to true cancels at period end, false would cancel immediately
     return this.request(`/subscriptions/${subscriptionId}`, {
-      method: "DELETE",
+      method: "PATCH",
       body: JSON.stringify({
-        immediate,
+        cancel_at_next_billing_date: !immediate, // If immediate=false, cancel at period end
+        status: immediate ? "cancelled" : undefined, // If immediate, set status to cancelled
       }),
     });
   }
