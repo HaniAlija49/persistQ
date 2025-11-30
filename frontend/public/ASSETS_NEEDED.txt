@@ -1,0 +1,85 @@
+📋 REQUIRED ASSETS FOR SEO - QUICK CHECKLIST
+
+Current Status:
+✅ logo.png (copied from logo-full.png)
+❌ og-image.png (1200x630 pixels) - CRITICAL for social sharing
+❌ icon-192.png (192x192 pixels) - For PWA
+❌ icon-512.png (512x512 pixels) - For PWA
+❌ favicon.ico - For browser tabs
+
+────────────────────────────────────────────────────────────
+
+🔥 MOST IMPORTANT: og-image.png
+
+This is what appears when someone shares your site on Facebook, Twitter, LinkedIn.
+
+Size: 1200px width × 630px height
+
+Suggested content:
+┌─────────────────────────────────────────┐
+│  [PersistQ Logo]                        │
+│                                         │
+│  PersistQ                               │
+│  Semantic Memory API for AI             │
+│                                         │
+│  💰 Zero Embedding Costs                │
+│  🔒 Privacy-First                       │
+│  ⚡ Sub-200ms Response Time             │
+│                                         │
+│  Background: Gradient (cyan to purple) │
+└─────────────────────────────────────────┘
+
+Tools to create:
+→ Canva.com (easiest, free templates)
+→ Figma (if you already use it)
+→ Photoshop/GIMP (if you have them)
+
+────────────────────────────────────────────────────────────
+
+📱 PWA ICONS: icon-192.png & icon-512.png
+
+These are for when users install your site as an app.
+
+Quick method - Use ImageMagick:
+  convert logo-small.png -resize 192x192 icon-192.png
+  convert logo-small.png -resize 512x512 icon-512.png
+
+Or use online tool:
+  → https://www.iloveimg.com/resize-image
+  → Upload logo-small.png
+  → Resize to 192x192, download as icon-192.png
+  → Resize to 512x512, download as icon-512.png
+
+────────────────────────────────────────────────────────────
+
+🌐 FAVICON: favicon.ico
+
+Browser tab icon. Multi-size ICO file (16x16, 32x32, 48x48).
+
+Easiest method:
+  1. Go to https://favicon.io/favicon-converter/
+  2. Upload logo-small.png
+  3. Download generated favicon.ico
+  4. Place in public/ folder
+
+────────────────────────────────────────────────────────────
+
+✅ VERIFICATION
+
+After adding files, check:
+  cd D:\Projects\MemoryHub-Monorepo\frontend\public
+  ls -la
+
+You should see:
+  logo.png ✅
+  og-image.png
+  icon-192.png
+  icon-512.png
+  favicon.ico
+
+Then update the memory:
+  "Created all required SEO assets for PersistQ"
+
+────────────────────────────────────────────────────────────
+
+Need help? Check public/README.md for detailed instructions.

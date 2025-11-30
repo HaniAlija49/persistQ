@@ -1,6 +1,6 @@
 import { SignUp } from "@clerk/nextjs"
 import Link from "next/link"
-import { Database } from "lucide-react"
+import Image from "next/image"
 
 export default function SignUpPage() {
   return (
@@ -8,8 +8,15 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00E0FF] to-[#8B5CF6] flex items-center justify-center">
-              <Database className="w-6 h-6 text-white" />
+            <div className="relative w-10 h-10">
+              <Image
+                src="/logo-small.png"
+                alt="PersistQ Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+                priority
+              />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-[#00E0FF] to-[#8B5CF6] bg-clip-text text-transparent">
               PersistQ

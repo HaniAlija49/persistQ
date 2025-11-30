@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Check, Shield, Brain, Lock } from "lucide-react"
+import { ArrowRight, Check, Shield, Lock } from "lucide-react"
 import { useState } from "react"
 
 export default function LandingPage() {
@@ -61,12 +62,19 @@ curl https://api.persistq.dev/v1/memories?group=preferences \\
       {/* Header */}
       <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-cyan to-accent-purple flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center gap-2">
+            <div className="relative w-8 h-8">
+              <Image
+                src="/logo-small.png"
+                alt="PersistQ Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+                priority
+              />
             </div>
             <span className="text-xl font-semibold">PersistQ</span>
-          </div>
+          </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
@@ -642,8 +650,14 @@ curl https://api.persistq.dev/v1/memories?group=preferences \\
           </div>
           <div className="pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-cyan to-accent-purple flex items-center justify-center">
-                <Brain className="w-4 h-4 text-white" />
+              <div className="relative w-7 h-7">
+                <Image
+                  src="/logo-small.png"
+                  alt="PersistQ Logo"
+                  width={28}
+                  height={28}
+                  className="object-contain"
+                />
               </div>
               <span className="font-semibold text-lg">PersistQ</span>
             </div>

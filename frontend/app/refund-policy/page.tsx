@@ -1,6 +1,6 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Database } from "lucide-react"
 
 export default function RefundPolicyPage() {
   return (
@@ -9,8 +9,15 @@ export default function RefundPolicyPage() {
       <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-cyan to-accent-purple flex items-center justify-center">
-              <Database className="w-5 h-5 text-white" />
+            <div className="relative w-8 h-8">
+              <Image
+                src="/logo-small.png"
+                alt="PersistQ Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+                priority
+              />
             </div>
             <span className="text-xl font-semibold">PersistQ</span>
           </Link>

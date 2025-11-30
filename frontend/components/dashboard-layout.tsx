@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useUser, SignOutButton } from "@clerk/nextjs"
 import { H } from '@highlight-run/next/client'
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -56,8 +57,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-14 items-center gap-2 border-b border-border px-4">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent-glow">
-              <Brain className="h-4 w-4 text-accent-cyan" />
+            <div className="relative h-7 w-7">
+              <Image
+                src="/logo-small.png"
+                alt="PersistQ Logo"
+                width={28}
+                height={28}
+                className="object-contain"
+              />
             </div>
             <span className="text-base font-semibold text-foreground">PersistQ</span>
             <span className="ml-auto rounded bg-accent-glow px-1.5 py-0.5 text-xs font-medium text-accent-cyan">
@@ -113,8 +120,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Mobile menu button */}
       <div className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-glow">
-            <Brain className="h-5 w-5 text-accent-cyan" />
+          <div className="relative h-8 w-8">
+            <Image
+              src="/logo-small.png"
+              alt="PersistQ Logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
           </div>
           <span className="text-lg font-semibold text-foreground">PersistQ</span>
         </div>
@@ -128,8 +141,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-40 bg-background lg:hidden">
           <div className="flex h-16 items-center justify-between border-b border-border px-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-glow">
-                <Brain className="h-5 w-5 text-accent-cyan" />
+              <div className="relative h-8 w-8">
+                <Image
+                  src="/logo-small.png"
+                  alt="PersistQ Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
               </div>
               <span className="text-lg font-semibold text-foreground">PersistQ</span>
             </div>
