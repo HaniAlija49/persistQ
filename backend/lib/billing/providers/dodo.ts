@@ -141,7 +141,7 @@ class DodoAPIClient {
     amount: number;
     currency: string;
   }> {
-    return this.request(`/v1/subscriptions/${subscriptionId}`, {
+    return this.request(`/subscriptions/${subscriptionId}`, {
       method: "GET",
     });
   }
@@ -150,7 +150,7 @@ class DodoAPIClient {
     subscriptionId: string,
     immediate: boolean = false
   ): Promise<any> {
-    return this.request(`/v1/subscriptions/${subscriptionId}`, {
+    return this.request(`/subscriptions/${subscriptionId}`, {
       method: "DELETE",
       body: JSON.stringify({
         immediate,
@@ -162,10 +162,13 @@ class DodoAPIClient {
     subscriptionId: string,
     newProductId: string
   ): Promise<any> {
-    return this.request(`/v1/subscriptions/${subscriptionId}`, {
-      method: "PATCH",
+    // Use the dedicated change plan endpoint
+    return this.request(`/subscriptions/change-plan`, {
+      method: "POST",
       body: JSON.stringify({
+        subscription_id: subscriptionId,
         product_id: newProductId,
+        change_plan_type: "prorated_immediately", // Charge prorated amount
       }),
     });
   }
