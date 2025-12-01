@@ -93,13 +93,22 @@ export async function POST(request: Request) {
     const provider = getBillingProvider();
 
     // Determine success and cancel URLs
-    const appUrl = env.NEXT_PUBLIC_APP_URL;
+    let appUrl = env.NEXT_PUBLIC_APP_URL;
+
     if (!appUrl) {
-      console.error("[Billing] NEXT_PUBLIC_APP_URL is not configured");
-      return NextResponse.json(
-        { error: "Server configuration error: Missing app URL" },
-        { status: 500 }
-      );
+      // Fallback: try to detect frontend URL from Referer header
+      const referer = request.headers.get("referer");
+      if (referer) {
+        const refererUrl = new URL(referer);
+        appUrl = `${refererUrl.protocol}//${refererUrl.host}`;
+        console.log(`[Billing] NEXT_PUBLIC_APP_URL not set, using referer: ${appUrl}`);
+      } else {
+        console.error("[Billing] NEXT_PUBLIC_APP_URL is not configured and no referer header");
+        return NextResponse.json(
+          { error: "Server configuration error: Missing app URL" },
+          { status: 500 }
+        );
+      }
     }
 
     // Dodo automatically appends subscription_id and status to the return URL
