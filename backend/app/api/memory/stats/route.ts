@@ -1,11 +1,21 @@
 import { NextResponse } from 'next/server'
 import { validateApiKey, AuthError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { enforceQuota } from '@/lib/billing/quotas'
 
 export async function GET() {
   try {
     // Validate API key and get user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Get total memory count for user
     const totalMemories = await prisma.memory.count({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { validateApiKey, AuthError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils'
+import { enforceQuota } from '@/lib/billing/quotas'
 
 export async function GET(
   request: NextRequest,
@@ -10,6 +11,15 @@ export async function GET(
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Get memory ID from URL
     const { id } = await params
@@ -60,6 +70,15 @@ export async function PUT(
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Get memory ID from URL
     const { id } = await params
@@ -119,6 +138,15 @@ export async function DELETE(
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Get memory ID from URL
     const { id } = await params

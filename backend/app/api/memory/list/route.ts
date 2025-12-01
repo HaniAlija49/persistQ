@@ -4,11 +4,21 @@ import { prisma } from '@/lib/prisma'
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils'
 import { listMemoriesSchema, validateRequest } from '@/lib/validation'
 import { withAppRouterHighlight } from '@/app/_utils/app-router-highlight.config'
+import { enforceQuota } from '@/lib/billing/quotas'
 
 export const GET = withAppRouterHighlight(async function GET(request: NextRequest) {
   try {
     // Authenticate user
     const user = await validateApiKey()
+
+    // Check API call quota
+    const quotaError = await enforceQuota(user.id, 'api_call')
+    if (quotaError) {
+      return NextResponse.json(
+        { error: quotaError.error, usage: quotaError.usage },
+        { status: quotaError.status }
+      )
+    }
 
     // Get and validate query parameters
     const { searchParams } = new URL(request.url)
