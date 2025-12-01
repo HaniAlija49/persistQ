@@ -113,18 +113,17 @@ class DodoAPIClient {
     customerId: string;
     returnUrl: string;
   }): Promise<{ url: string }> {
-    const response = await this.request<{ portal_url: string }>(
-      "/v1/portal/sessions",
+    const response = await this.request<{ url: string }>(
+      `/customers/${params.customerId}/customer-portal/session`,
       {
         method: "POST",
         body: JSON.stringify({
-          customer_id: params.customerId,
           return_url: params.returnUrl,
         }),
       }
     );
 
-    return { url: response.portal_url };
+    return { url: response.url };
   }
 
   async getSubscription(
