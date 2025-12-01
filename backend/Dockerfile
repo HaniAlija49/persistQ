@@ -9,8 +9,11 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 FROM base AS deps
 WORKDIR /app
 
-# Install dependencies
+# Copy package files and prisma schema
 COPY package.json package-lock.json ./
+COPY prisma ./prisma
+
+# Install dependencies (postinstall will run prisma generate)
 RUN npm ci
 
 # Rebuild the source code only when needed
@@ -19,10 +22,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Build Next.js
+# Build Next.js (prisma generate already ran in deps stage)
 RUN npm run build
 
 # Production image, copy all the files and run next
