@@ -77,10 +77,15 @@ export async function GET(request: Request) {
       throw new Error(`Portal session URL is missing or invalid: ${JSON.stringify(portalSession)}`);
     }
 
-    console.log(`[Billing] Redirecting to portal: ${portalSession.url}`);
+    console.log(`[Billing] Returning portal URL: ${portalSession.url}`);
 
-    // Redirect to portal
-    return NextResponse.redirect(portalSession.url);
+    // Return the portal URL to the frontend (frontend will handle redirect)
+    return NextResponse.json({
+      status: "success",
+      data: {
+        url: portalSession.url,
+      },
+    });
   } catch (error) {
     console.error("[Billing] Portal error:", error);
 
