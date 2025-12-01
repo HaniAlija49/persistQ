@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useApi } from "@/hooks/use-api"
+import { useAuth } from "@clerk/nextjs"
 import { BillingService } from "@/services/billing.service"
 import { SubscriptionCard } from "@/components/billing/subscription-card"
 import { UsageCard } from "@/components/billing/usage-card"
@@ -15,6 +16,7 @@ import type { BillingData } from "@/lib/billing-types"
 
 export default function BillingPage() {
   const api = useApi()
+  const { getToken } = useAuth()
   const { toast } = useToast()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -63,7 +65,7 @@ export default function BillingPage() {
     setIsLoading(true)
     setError(null)
 
-    const data = await BillingService.getSubscriptionData()
+    const data = await BillingService.getSubscriptionData(getToken)
 
     if (!data) {
       setError('Failed to load billing data. Please try again.')
@@ -80,7 +82,7 @@ export default function BillingPage() {
 
     // If user is on free plan, redirect to checkout instead of updating
     if (billingData?.subscription.planId === 'free') {
-      const checkout = await BillingService.createCheckout(planId, interval)
+      const checkout = await BillingService.createCheckout(planId, interval, getToken)
 
       if (checkout?.url) {
         // Redirect to checkout page
@@ -97,7 +99,7 @@ export default function BillingPage() {
     }
 
     // For existing subscribers, update the plan
-    const result = await BillingService.updatePlan(planId, interval)
+    const result = await BillingService.updatePlan(planId, interval, getToken)
 
     if (result.success) {
       toast({
@@ -120,7 +122,7 @@ export default function BillingPage() {
   const handleCancelSubscription = async (immediate: boolean) => {
     setIsActionLoading(true)
 
-    const result = await BillingService.cancelSubscription(immediate)
+    const result = await BillingService.cancelSubscription(immediate, getToken)
 
     if (result.success) {
       toast({
@@ -144,7 +146,7 @@ export default function BillingPage() {
   // Handle portal redirect
   const handleManagePortal = async () => {
     try {
-      await BillingService.openPortal()
+      await BillingService.openPortal(getToken)
     } catch (error) {
       toast({
         title: "Portal Error",

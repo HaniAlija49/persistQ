@@ -12,8 +12,14 @@ export class BillingService {
   /**
    * Get current subscription data
    */
-  static async getSubscriptionData(): Promise<BillingData | null> {
+  static async getSubscriptionData(getToken?: () => Promise<string | null>): Promise<BillingData | null> {
     try {
+      // Refresh token before API call
+      if (getToken) {
+        const token = await getToken()
+        if (token) apiClient.setClerkToken(token)
+      }
+
       const response = await apiClient.getBilling()
 
       if (response.status === 'error') {
@@ -33,9 +39,16 @@ export class BillingService {
    */
   static async updatePlan(
     planId: string,
-    interval: 'monthly' | 'yearly'
+    interval: 'monthly' | 'yearly',
+    getToken?: () => Promise<string | null>
   ): Promise<{ success: boolean; error?: string }> {
     try {
+      // Refresh token before API call
+      if (getToken) {
+        const token = await getToken()
+        if (token) apiClient.setClerkToken(token)
+      }
+
       const response = await apiClient.updateSubscription(planId, interval)
 
       if (response.status === 'error') {
@@ -56,9 +69,16 @@ export class BillingService {
    * Cancel subscription
    */
   static async cancelSubscription(
-    immediate: boolean = false
+    immediate: boolean = false,
+    getToken?: () => Promise<string | null>
   ): Promise<{ success: boolean; error?: string }> {
     try {
+      // Refresh token before API call
+      if (getToken) {
+        const token = await getToken()
+        if (token) apiClient.setClerkToken(token)
+      }
+
       const response = await apiClient.cancelSubscription(immediate)
 
       if (response.status === 'error') {
@@ -78,8 +98,14 @@ export class BillingService {
   /**
    * Open customer portal (redirects user)
    */
-  static async openPortal(): Promise<void> {
+  static async openPortal(getToken?: () => Promise<string | null>): Promise<void> {
     try {
+      // Refresh token before API call
+      if (getToken) {
+        const token = await getToken()
+        if (token) apiClient.setClerkToken(token)
+      }
+
       const response = await apiClient.getPortalUrl()
 
       if (response.status === 'error') {
@@ -101,9 +127,16 @@ export class BillingService {
    */
   static async createCheckout(
     planId: string,
-    interval: 'monthly' | 'yearly'
+    interval: 'monthly' | 'yearly',
+    getToken?: () => Promise<string | null>
   ): Promise<CheckoutSession | null> {
     try {
+      // Refresh token before API call
+      if (getToken) {
+        const token = await getToken()
+        if (token) apiClient.setClerkToken(token)
+      }
+
       const response = await apiClient.createCheckout(planId, interval)
 
       if (response.status === 'error') {
