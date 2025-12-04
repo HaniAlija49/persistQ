@@ -8,4 +8,4 @@ Disallow: /login
 Disallow: /signup
 
 # Sitemap location
-Sitemap: https://persistq.com/sitemap.xml
+Sitemap: https://www.persistq.com/sitemap.xml
