@@ -61,6 +61,19 @@ export default function BillingPage() {
     }
   }, [api.isReady])
 
+  // Reload billing data when user returns to the page (e.g., after visiting portal)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && api.isReady) {
+        console.log('[Billing] Page became visible, refreshing billing data...')
+        loadBillingData()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [api.isReady])
+
   const loadBillingData = async () => {
     setIsLoading(true)
     setError(null)
@@ -107,15 +120,15 @@ export default function BillingPage() {
         description: `Your subscription has been changed successfully.`,
       })
       await loadBillingData() // Refresh data
+      setIsActionLoading(false)
     } else {
       toast({
         title: "Update Failed",
         description: result.error || "Failed to update plan. Please try again.",
         variant: "destructive",
       })
+      setIsActionLoading(false)
     }
-
-    setIsActionLoading(false)
   }
 
   // Handle subscription cancellation
@@ -131,16 +144,20 @@ export default function BillingPage() {
           ? "Your subscription has been canceled immediately."
           : "Your subscription will be canceled at the end of the billing period.",
       })
-      await loadBillingData() // Refresh data
+
+      // Wait a moment for webhook to process, then refresh
+      setTimeout(async () => {
+        await loadBillingData()
+        setIsActionLoading(false)
+      }, 2000)
     } else {
       toast({
         title: "Cancellation Failed",
         description: result.error || "Failed to cancel subscription. Please try again.",
         variant: "destructive",
       })
+      setIsActionLoading(false)
     }
-
-    setIsActionLoading(false)
   }
 
   // Handle portal redirect
