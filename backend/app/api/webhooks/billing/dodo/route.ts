@@ -14,6 +14,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Disable body parsing for webhook signature verification
+// Next.js must not parse the body so we can verify the raw signature
+export const dynamic = 'force-dynamic';
+
 // Track processed webhook IDs to prevent duplicate processing
 const processedWebhooks = new Map<string, number>();
 
@@ -50,13 +54,21 @@ export async function POST(request: Request) {
     const rawBody = await request.text();
     console.log("[Webhook] Received payload length:", rawBody.length);
 
-    // Get webhook headers - Note: Next.js headers() returns lowercase keys
+    // Get webhook headers - try multiple casings as Dodo might send them differently
     const headersList = await headers();
-    const webhookId = headersList.get("webhook-id");
-    const webhookSignature = headersList.get("webhook-signature");
-    const webhookTimestamp = headersList.get("webhook-timestamp");
 
-    console.log("[Webhook] Headers:", {
+    // Log all headers for debugging
+    const allHeaders: Record<string, string> = {};
+    headersList.forEach((value, key) => {
+      allHeaders[key] = value;
+    });
+    console.log("[Webhook] All received headers:", allHeaders);
+
+    const webhookId = headersList.get("webhook-id") || headersList.get("svix-id");
+    const webhookSignature = headersList.get("webhook-signature") || headersList.get("svix-signature");
+    const webhookTimestamp = headersList.get("webhook-timestamp") || headersList.get("svix-timestamp");
+
+    console.log("[Webhook] Extracted headers:", {
       webhookId,
       webhookSignature: webhookSignature ? `${webhookSignature.substring(0, 20)}...` : null,
       webhookTimestamp,
