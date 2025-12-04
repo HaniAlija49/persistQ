@@ -262,15 +262,15 @@ export class DodoProvider implements IBillingProvider {
     };
 
     return {
-      id: sub.id,
-      customerId: sub.customer_id,
+      id: sub.subscription_id || sub.id,
+      customerId: sub.customer?.customer_id || sub.customer_id,
       planId: planInfo?.planId || "free",
       status: this.normalizeDodoStatus(sub.status),
-      currentPeriodStart: parseDate(sub.current_period_start),
-      currentPeriodEnd: parseDate(sub.current_period_end),
-      cancelAtPeriodEnd: sub.cancel_at_period_end || false,
+      currentPeriodStart: parseDate(sub.previous_billing_date || sub.current_period_start),
+      currentPeriodEnd: parseDate(sub.next_billing_date || sub.current_period_end),
+      cancelAtPeriodEnd: sub.cancel_at_next_billing_date || sub.cancel_at_period_end || false,
       interval: (planInfo?.interval || "monthly") as "monthly" | "yearly",
-      amount: sub.amount,
+      amount: sub.recurring_pre_tax_amount || sub.amount || 0,
       currency: sub.currency,
     };
   }
