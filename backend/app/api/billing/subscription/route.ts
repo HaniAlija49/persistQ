@@ -190,13 +190,27 @@ export async function POST(request: Request) {
     );
 
     // Update user in database immediately (don't wait for webhook)
+    // Ensure we never pass invalid Date objects to Prisma
+    const currentPeriodEnd = updatedSubscription.currentPeriodEnd;
+    const validPeriodEnd = currentPeriodEnd instanceof Date && !isNaN(currentPeriodEnd.getTime())
+      ? currentPeriodEnd
+      : null;
+
+    console.log("[Billing] Updating user with:", {
+      planId: updatedSubscription.planId,
+      interval: updatedSubscription.interval,
+      status: updatedSubscription.status,
+      currentPeriodEnd: validPeriodEnd,
+      cancelAtPeriodEnd: updatedSubscription.cancelAtPeriodEnd || false,
+    });
+
     await prisma.user.update({
       where: { id: user.id },
       data: {
         planId: updatedSubscription.planId,
         billingInterval: updatedSubscription.interval,
         subscriptionStatus: updatedSubscription.status,
-        currentPeriodEnd: updatedSubscription.currentPeriodEnd || null,
+        currentPeriodEnd: validPeriodEnd,
         cancelAtPeriodEnd: updatedSubscription.cancelAtPeriodEnd || false,
       },
     });
@@ -277,12 +291,25 @@ export async function DELETE(request: Request) {
     );
 
     // Update user in database immediately (don't wait for webhook)
+    // Ensure we never pass invalid Date objects to Prisma
+    const currentPeriodEnd = canceledSubscription.currentPeriodEnd;
+    const validPeriodEnd = currentPeriodEnd instanceof Date && !isNaN(currentPeriodEnd.getTime())
+      ? currentPeriodEnd
+      : null;
+
+    console.log("[Billing] Updating user after cancellation with:", {
+      status: canceledSubscription.status,
+      cancelAtPeriodEnd: canceledSubscription.cancelAtPeriodEnd || false,
+      currentPeriodEnd: validPeriodEnd,
+      immediate,
+    });
+
     await prisma.user.update({
       where: { id: user.id },
       data: {
         subscriptionStatus: canceledSubscription.status,
         cancelAtPeriodEnd: canceledSubscription.cancelAtPeriodEnd || false,
-        currentPeriodEnd: canceledSubscription.currentPeriodEnd || null,
+        currentPeriodEnd: validPeriodEnd,
         // If immediate cancellation, also update plan to free
         ...(immediate && {
           planId: 'free',

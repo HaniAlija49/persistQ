@@ -242,17 +242,33 @@ export class DodoProvider implements IBillingProvider {
   async getSubscription(subscriptionId: string): Promise<SubscriptionData> {
     const sub = await this.client.getSubscription(subscriptionId);
 
+    console.log("[Dodo] Raw subscription data from Dodo:", JSON.stringify(sub, null, 2));
+
     // Map Dodo product ID back to our plan ID
     const planInfo = getPlanIdFromProductId("dodo", sub.product_id);
+
+    // Helper to safely parse dates
+    const parseDate = (value: any): Date | null => {
+      if (!value) return null;
+      if (typeof value === 'number') {
+        const date = new Date(value * 1000);
+        return isNaN(date.getTime()) ? null : date;
+      }
+      if (typeof value === 'string') {
+        const date = new Date(value);
+        return isNaN(date.getTime()) ? null : date;
+      }
+      return null;
+    };
 
     return {
       id: sub.id,
       customerId: sub.customer_id,
       planId: planInfo?.planId || "free",
       status: this.normalizeDodoStatus(sub.status),
-      currentPeriodStart: new Date(sub.current_period_start * 1000),
-      currentPeriodEnd: new Date(sub.current_period_end * 1000),
-      cancelAtPeriodEnd: sub.cancel_at_period_end,
+      currentPeriodStart: parseDate(sub.current_period_start),
+      currentPeriodEnd: parseDate(sub.current_period_end),
+      cancelAtPeriodEnd: sub.cancel_at_period_end || false,
       interval: (planInfo?.interval || "monthly") as "monthly" | "yearly",
       amount: sub.amount,
       currency: sub.currency,
