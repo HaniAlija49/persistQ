@@ -8,6 +8,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { BillingEvent, PaymentData, SubscriptionData } from "./types";
 import { logBillingEvent } from "./audit";
+import { WebhookMetadataSchema, type WebhookMetadata } from "./validation";
 
 const prisma = new PrismaClient();
 
@@ -36,22 +37,35 @@ export async function handleSubscriptionCreated(
   // If not found by customer ID, try to find by metadata (for first-time subscribers)
   if (!user) {
     // Metadata is in different locations depending on the event
-    const metadata = event.rawEvent?.data?.metadata || event.rawEvent?.metadata;
+    const rawMetadata = event.rawEvent?.data?.metadata || event.rawEvent?.metadata;
 
-    if (metadata) {
-      const userId = metadata.userId || metadata.user_id;
-      const clerkUserId = metadata.clerkUserId || metadata.clerk_user_id;
+    if (rawMetadata) {
+      // Validate metadata with Zod schema
+      const validationResult = WebhookMetadataSchema.safeParse(rawMetadata);
 
-      console.log(`[Billing] Trying to find user by metadata:`, { userId, clerkUserId, metadata });
+      if (!validationResult.success) {
+        console.error(
+          `[Billing] Invalid webhook metadata for event ${event.type}:`,
+          validationResult.error.errors
+        );
+        console.error(`[Billing] Raw metadata:`, rawMetadata);
+        // Continue without metadata - customer ID lookup failed above
+      } else {
+        const metadata: WebhookMetadata = validationResult.data;
+        const userId = metadata.userId || metadata.user_id;
+        const clerkUserId = metadata.clerkUserId || metadata.clerk_user_id;
 
-      if (userId) {
-        user = await prisma.user.findUnique({
-          where: { id: userId },
-        });
-      } else if (clerkUserId) {
-        user = await prisma.user.findUnique({
-          where: { clerkUserId: clerkUserId },
-        });
+        console.log(`[Billing] Validated metadata:`, { userId, clerkUserId });
+
+        if (userId) {
+          user = await prisma.user.findUnique({
+            where: { id: userId },
+          });
+        } else if (clerkUserId) {
+          user = await prisma.user.findUnique({
+            where: { clerkUserId: clerkUserId },
+          });
+        }
       }
     }
   }
