@@ -51,6 +51,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    console.log("[Billing] GET subscription - user data from DB:", {
+      userId: user.id,
+      planId: user.planId,
+      billingInterval: user.billingInterval,
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionId: user.subscriptionId,
+    });
+
     // Get plan details
     const plan = getPlan(user.planId);
 
@@ -182,12 +190,28 @@ export async function POST(request: Request) {
     // Get billing provider
     const provider = getBillingProvider();
 
+    console.log("[Billing] Current user state before update:", {
+      userId: user.id,
+      currentPlanId: user.planId,
+      currentInterval: user.billingInterval,
+      subscriptionId: user.subscriptionId,
+      requestedPlanId: planId,
+      requestedInterval: interval,
+    });
+
     // Update subscription
     const updatedSubscription = await provider.updateSubscription(
       user.subscriptionId,
       planId,
       interval
     );
+
+    console.log("[Billing] Subscription updated with Dodo, response:", {
+      id: updatedSubscription.id,
+      planId: updatedSubscription.planId,
+      interval: updatedSubscription.interval,
+      status: updatedSubscription.status,
+    });
 
     // Update user in database immediately (don't wait for webhook)
     // Ensure we never pass invalid Date objects to Prisma
