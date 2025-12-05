@@ -178,20 +178,26 @@ class DodoAPIClient {
     subscriptionId: string,
     newProductId: string
   ): Promise<any> {
-    console.log("[Dodo] Sending PATCH request to Dodo:", {
-      endpoint: `/subscriptions/${subscriptionId}`,
-      body: { product_id: newProductId },
+    console.log("[Dodo] Sending POST change-plan request to Dodo:", {
+      endpoint: `/subscriptions/${subscriptionId}/change-plan`,
+      body: {
+        product_id: newProductId,
+        proration_billing_mode: "prorated_immediately",
+        quantity: 1,
+      },
     });
 
-    // Use PATCH on the subscription endpoint to update the product
-    const response = await this.request(`/subscriptions/${subscriptionId}`, {
-      method: "PATCH",
+    // Use the dedicated change-plan endpoint to update the product
+    const response = await this.request(`/subscriptions/${subscriptionId}/change-plan`, {
+      method: "POST",
       body: JSON.stringify({
         product_id: newProductId,
+        proration_billing_mode: "prorated_immediately", // Fair billing for upgrades/downgrades
+        quantity: 1, // Standard for SaaS subscriptions
       }),
     });
 
-    console.log("[Dodo] PATCH response from Dodo:", JSON.stringify(response, null, 2));
+    console.log("[Dodo] Change-plan response from Dodo:", JSON.stringify(response, null, 2));
 
     return response;
   }
