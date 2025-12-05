@@ -65,35 +65,26 @@ export async function POST(request: Request) {
       subscriptionId: user.subscriptionId,
     });
 
-    // Reactivate by removing the cancellation flag
-    // This is handled by PATCH in the Dodo provider
-    // For now, update directly via database since Dodo's PATCH supports this
+    // Call provider API FIRST (webhook will update database)
+    // If provider has a reactivate method, use it
+    if ('reactivateSubscription' in provider && typeof provider.reactivateSubscription === 'function') {
+      await provider.reactivateSubscription(user.subscriptionId);
+    }
+
+    // Update sync timestamp only (webhook will handle actual data update)
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        cancelAtPeriodEnd: false,
-        subscriptionStatus: "active",
+        lastBillingSyncAt: new Date(),
       },
     });
 
-    // Also update via provider API to ensure consistency
-    try {
-      const subscription = await provider.getSubscription(user.subscriptionId);
-
-      // If provider has a reactivate method, use it
-      if ('reactivateSubscription' in provider && typeof provider.reactivateSubscription === 'function') {
-        await provider.reactivateSubscription(user.subscriptionId);
-      }
-    } catch (error) {
-      console.warn("[Billing] Failed to reactivate via provider API:", error);
-      // Continue anyway - we updated the database
-    }
-
-    console.log("[Billing] Subscription reactivated successfully");
+    console.log("[Billing] Subscription reactivation initiated, waiting for webhook confirmation");
 
     return NextResponse.json({
       status: "success",
-      message: "Subscription reactivated successfully",
+      message: "Subscription reactivation initiated. Changes will be reflected shortly.",
+      note: "Waiting for payment provider confirmation via webhook"
     });
   } catch (error) {
     console.error("[Billing] Reactivate subscription error:", error);

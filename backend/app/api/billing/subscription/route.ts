@@ -213,45 +213,24 @@ export async function POST(request: Request) {
       status: updatedSubscription.status,
     });
 
-    // Update user in database immediately (don't wait for webhook)
-    // Ensure we never pass invalid Date objects to Prisma
-    const currentPeriodEnd = updatedSubscription.currentPeriodEnd;
-    const validPeriodEnd = currentPeriodEnd instanceof Date && !isNaN(currentPeriodEnd.getTime())
-      ? currentPeriodEnd
-      : null;
-
-    console.log("[Billing] Updating user with:", {
-      planId: updatedSubscription.planId,
-      interval: updatedSubscription.interval,
-      status: updatedSubscription.status,
-      currentPeriodEnd: validPeriodEnd,
-      cancelAtPeriodEnd: updatedSubscription.cancelAtPeriodEnd || false,
-    });
-
-    const updatedUser = await prisma.user.update({
+    // Update sync timestamp only (webhook will handle actual data update)
+    // This prevents race conditions between API and webhook updates
+    await prisma.user.update({
       where: { id: user.id },
       data: {
-        planId: updatedSubscription.planId,
-        billingInterval: updatedSubscription.interval,
-        subscriptionStatus: updatedSubscription.status,
-        currentPeriodEnd: validPeriodEnd,
-        cancelAtPeriodEnd: updatedSubscription.cancelAtPeriodEnd || false,
+        lastBillingSyncAt: new Date(),
       },
     });
 
-    console.log("[Billing] User updated successfully in database:", {
-      userId: updatedUser.id,
-      planId: updatedUser.planId,
-      billingInterval: updatedUser.billingInterval,
-      subscriptionStatus: updatedUser.subscriptionStatus,
-    });
+    console.log("[Billing] Subscription update initiated, waiting for webhook confirmation");
 
-    // Return updated subscription
+    // Return success - webhook will update the database
     return NextResponse.json({
       status: "success",
       data: {
         subscription: updatedSubscription,
-        message: "Subscription updated successfully",
+        message: "Subscription update initiated. Changes will be reflected shortly.",
+        note: "Waiting for payment provider confirmation via webhook"
       },
     });
   } catch (error) {
@@ -321,44 +300,26 @@ export async function DELETE(request: Request) {
       immediate
     );
 
-    // Update user in database immediately (don't wait for webhook)
-    // Ensure we never pass invalid Date objects to Prisma
-    const currentPeriodEnd = canceledSubscription.currentPeriodEnd;
-    const validPeriodEnd = currentPeriodEnd instanceof Date && !isNaN(currentPeriodEnd.getTime())
-      ? currentPeriodEnd
-      : null;
-
-    console.log("[Billing] Updating user after cancellation with:", {
-      status: canceledSubscription.status,
-      cancelAtPeriodEnd: canceledSubscription.cancelAtPeriodEnd || false,
-      currentPeriodEnd: validPeriodEnd,
-      immediate,
-    });
-
+    // Update sync timestamp only (webhook will handle actual data update)
+    // This prevents race conditions between API and webhook updates
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        subscriptionStatus: canceledSubscription.status,
-        cancelAtPeriodEnd: canceledSubscription.cancelAtPeriodEnd || false,
-        currentPeriodEnd: validPeriodEnd,
-        // If immediate cancellation, also update plan to free
-        ...(immediate && {
-          planId: 'free',
-          billingInterval: null,
-          subscriptionId: null,
-          billingCustomerId: null,
-        }),
+        lastBillingSyncAt: new Date(),
       },
     });
 
-    // Return canceled subscription
+    console.log("[Billing] Subscription cancellation initiated, waiting for webhook confirmation");
+
+    // Return success - webhook will update the database
     return NextResponse.json({
       status: "success",
       data: {
         subscription: canceledSubscription,
         message: immediate
-          ? "Subscription canceled immediately"
+          ? "Subscription cancellation initiated"
           : "Subscription will be canceled at the end of the billing period",
+        note: "Changes will be reflected shortly"
       },
     });
   } catch (error) {

@@ -395,11 +395,8 @@ export class DodoProvider implements IBillingProvider {
       // The library expects the raw payload and headers object
       const rawPayload = typeof payload === "string" ? payload : payload.toString();
 
-      console.log("[Dodo] Verifying webhook with:");
+      console.log("[Dodo] Verifying webhook signature...");
       console.log("[Dodo]   - Payload length:", rawPayload.length);
-      console.log("[Dodo]   - Headers:", JSON.stringify(headers));
-      console.log("[Dodo]   - Secret length:", secret.length);
-      console.log("[Dodo]   - Secret prefix:", secret.substring(0, 10) + "...");
 
       // Verify signature - this will throw if invalid
       await webhook.verify(rawPayload, headers as any);

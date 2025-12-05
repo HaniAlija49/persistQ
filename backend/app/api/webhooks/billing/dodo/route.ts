@@ -34,8 +34,6 @@ export async function POST(request: Request) {
     }
 
     console.log("[Webhook] Webhook secret is configured");
-    console.log("[Webhook] Secret length:", webhookSecret.length);
-    console.log("[Webhook] Secret prefix:", webhookSecret.substring(0, 10) + "...");
 
     // Get raw body for signature verification
     const rawBody = await request.text();
