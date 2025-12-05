@@ -12,6 +12,9 @@ import { isValidPlanId, isPaidPlan } from "@/config/plans";
 import { env } from "@/lib/env";
 import { authenticateRequest } from "@/lib/clerk-auth-helper";
 import { checkBillingRateLimit } from "@/lib/billing/ratelimit";
+import { CheckoutSessionSchema, formatValidationErrors } from "@/lib/billing/validation";
+import { createGenericErrorResponse } from "@/lib/billing/errors";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -45,36 +48,27 @@ export async function POST(request: Request) {
     const rateLimitError = await checkBillingRateLimit(user.id);
     if (rateLimitError) return rateLimitError;
 
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json();
-    const { planId, interval } = body;
 
-    // Validate inputs
-    if (!planId || !interval) {
-      return NextResponse.json(
-        { error: "Missing required fields: planId, interval" },
-        { status: 400 }
-      );
+    let validatedInput;
+    try {
+      validatedInput = CheckoutSessionSchema.parse(body);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors = formatValidationErrors(error);
+        return NextResponse.json(
+          {
+            error: formattedErrors.message,
+            details: formattedErrors.fields,
+          },
+          { status: 400 }
+        );
+      }
+      throw error;
     }
 
-    if (!isValidPlanId(planId)) {
-      return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
-    }
-
-    if (interval !== "monthly" && interval !== "yearly") {
-      return NextResponse.json(
-        { error: "Invalid interval. Must be 'monthly' or 'yearly'" },
-        { status: 400 }
-      );
-    }
-
-    // Check if user is trying to subscribe to free plan
-    if (!isPaidPlan(planId)) {
-      return NextResponse.json(
-        { error: "Cannot checkout for free plan" },
-        { status: 400 }
-      );
-    }
+    const { planId, interval } = validatedInput;
 
     // Check if user already has an active PAID subscription
     // Free tier users (planId === "free") should be allowed to upgrade
@@ -145,13 +139,12 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[Billing] Checkout error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "checkout");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error ? error.message : "Failed to create checkout session",
+        ...errorResponse,
       },
       { status: 500 }
     );

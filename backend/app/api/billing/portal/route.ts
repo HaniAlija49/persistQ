@@ -11,6 +11,7 @@ import { getBillingProvider, isBillingConfigured } from "@/lib/billing/factory";
 import { env } from "@/lib/env";
 import { authenticateRequest } from "@/lib/clerk-auth-helper";
 import { checkBillingRateLimit } from "@/lib/billing/ratelimit";
+import { createGenericErrorResponse } from "@/lib/billing/errors";
 
 const prisma = new PrismaClient();
 
@@ -92,15 +93,12 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[Billing] Portal error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "portal");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to create portal session",
+        ...errorResponse,
       },
       { status: 500 }
     );

@@ -12,6 +12,9 @@ import { getBillingProvider, isBillingConfigured } from "@/lib/billing/factory";
 import { getPlan, isValidPlanId } from "@/config/plans";
 import { authenticateRequest } from "@/lib/clerk-auth-helper";
 import { checkBillingRateLimit } from "@/lib/billing/ratelimit";
+import { UpdateSubscriptionSchema, formatValidationErrors } from "@/lib/billing/validation";
+import { createGenericErrorResponse } from "@/lib/billing/errors";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -115,15 +118,12 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[Billing] Get subscription error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "get_subscription");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch subscription",
+        ...errorResponse,
       },
       { status: 500 }
     );
@@ -173,28 +173,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json();
-    const { planId, interval } = body;
 
-    // Validate inputs
-    if (!planId || !interval) {
-      return NextResponse.json(
-        { error: "Missing required fields: planId, interval" },
-        { status: 400 }
-      );
+    let validatedInput;
+    try {
+      validatedInput = UpdateSubscriptionSchema.parse(body);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors = formatValidationErrors(error);
+        return NextResponse.json(
+          {
+            error: formattedErrors.message,
+            details: formattedErrors.fields,
+          },
+          { status: 400 }
+        );
+      }
+      throw error;
     }
 
-    if (!isValidPlanId(planId)) {
-      return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
-    }
-
-    if (interval !== "monthly" && interval !== "yearly") {
-      return NextResponse.json(
-        { error: "Invalid interval. Must be 'monthly' or 'yearly'" },
-        { status: 400 }
-      );
-    }
+    const { planId, interval } = validatedInput;
 
     // Get billing provider
     const provider = getBillingProvider();
@@ -243,15 +242,12 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[Billing] Update subscription error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "update_subscription");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to update subscription",
+        ...errorResponse,
       },
       { status: 500 }
     );
@@ -336,15 +332,12 @@ export async function DELETE(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[Billing] Cancel subscription error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "cancel_subscription");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to cancel subscription",
+        ...errorResponse,
       },
       { status: 500 }
     );

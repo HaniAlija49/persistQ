@@ -9,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 import { getBillingProvider, isBillingConfigured } from "@/lib/billing/factory";
 import { authenticateRequest } from "@/lib/clerk-auth-helper";
 import { checkBillingRateLimit } from "@/lib/billing/ratelimit";
+import { createGenericErrorResponse } from "@/lib/billing/errors";
 
 const prisma = new PrismaClient();
 
@@ -92,15 +93,12 @@ export async function POST(request: Request) {
       note: "Waiting for payment provider confirmation via webhook"
     });
   } catch (error) {
-    console.error("[Billing] Reactivate subscription error:", error);
+    const errorResponse = createGenericErrorResponse(error, user?.id, "reactivate_subscription");
 
     return NextResponse.json(
       {
         status: "error",
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to reactivate subscription",
+        ...errorResponse,
       },
       { status: 500 }
     );
