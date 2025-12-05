@@ -11,6 +11,7 @@ import { getBillingProvider, isBillingConfigured } from "@/lib/billing/factory";
 import { isValidPlanId, isPaidPlan } from "@/config/plans";
 import { env } from "@/lib/env";
 import { authenticateRequest } from "@/lib/clerk-auth-helper";
+import { checkBillingRateLimit } from "@/lib/billing/ratelimit";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,10 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    // Rate limit check
+    const rateLimitError = await checkBillingRateLimit(user.id);
+    if (rateLimitError) return rateLimitError;
 
     // Parse request body
     const body = await request.json();
