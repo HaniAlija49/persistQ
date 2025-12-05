@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://persistq.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.persistq.com'
 
   return {
     rules: [
@@ -9,10 +9,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          '/api/',
-          '/dashboard/',
-          '/_next/',
-          '/admin/',
+          '/dashboard',
+          '/login',
+          '/signup',
         ],
       },
     ],
