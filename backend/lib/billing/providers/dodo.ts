@@ -201,6 +201,16 @@ class DodoAPIClient {
 
     return response;
   }
+
+  async reactivateSubscription(subscriptionId: string): Promise<any> {
+    // Use PATCH to remove the cancellation flag and reactivate
+    return this.request(`/subscriptions/${subscriptionId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        cancel_at_next_billing_date: false,
+      }),
+    });
+  }
 }
 
 // ============================================================================
@@ -330,13 +340,8 @@ export class DodoProvider implements IBillingProvider {
       if (currentSub.cancelAtPeriodEnd) {
         console.log("[Dodo] Subscription is scheduled for cancellation, removing cancellation flag first...");
 
-        // Use PATCH to remove the cancellation flag and reactivate
-        await this.client.request(`/subscriptions/${subscriptionId}`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            cancel_at_next_billing_date: false,
-          }),
-        });
+        // Use the client's reactivateSubscription method
+        await this.client.reactivateSubscription(subscriptionId);
 
         console.log("[Dodo] Cancellation flag removed successfully");
       }
@@ -359,13 +364,8 @@ export class DodoProvider implements IBillingProvider {
   async reactivateSubscription(subscriptionId: string): Promise<SubscriptionData> {
     console.log("[Dodo] Reactivating subscription:", subscriptionId);
 
-    // Use PATCH to remove the cancellation flag
-    await this.client.request(`/subscriptions/${subscriptionId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        cancel_at_next_billing_date: false,
-      }),
-    });
+    // Use the client's reactivateSubscription method
+    await this.client.reactivateSubscription(subscriptionId);
 
     console.log("[Dodo] Subscription reactivated successfully");
 
