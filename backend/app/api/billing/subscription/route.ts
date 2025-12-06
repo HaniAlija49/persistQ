@@ -329,16 +329,28 @@ export async function DELETE(request: Request) {
       immediate
     );
 
-    // Update sync timestamp only (webhook will handle actual data update)
-    // This prevents race conditions between API and webhook updates
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        lastBillingSyncAt: new Date(),
-      },
-    });
+    // For cancel-at-period-end, we need to update the flag immediately
+    // because Dodo doesn't send a webhook until the subscription actually expires
+    if (!immediate) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          cancelAtPeriodEnd: true,
+          lastBillingSyncAt: new Date(),
+        },
+      });
+      console.log("[Billing] Updated cancelAtPeriodEnd flag in database");
+    } else {
+      // For immediate cancellation, webhook will handle the status update
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          lastBillingSyncAt: new Date(),
+        },
+      });
+    }
 
-    console.log("[Billing] Subscription cancellation initiated, waiting for webhook confirmation");
+    console.log("[Billing] Subscription cancellation initiated");
 
     // Return success - webhook will update the database
     return NextResponse.json({
