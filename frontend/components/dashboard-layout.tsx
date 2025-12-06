@@ -328,11 +328,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   labelIcon={<CreditCard className="w-4 h-4" />}
                   href="/dashboard/billing"
                 />
-                <UserButton.Link
-                  label="Settings"
-                  labelIcon={<Settings className="w-4 h-4" />}
-                  href="/dashboard/settings"
-                />
               </UserButton.MenuItems>
             </UserButton>
           </div>
