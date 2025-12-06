@@ -159,15 +159,39 @@ const getCopilotPrompt = (apiKey?: string | null, apiUrl?: string) => {
 
 You now have access to the PersistQ API for persistent long-term memory storage via the Model Context Protocol (MCP).
 
-## Configuration Instructions
+## Prerequisites
 
-To set up PersistQ with GitHub Copilot CLI, add the following to your MCP configuration file:
+1. **Install GitHub Copilot CLI**:
+\`\`\`bash
+npm install -g @github/copilot
+gh auth login
+copilot /login
+\`\`\`
 
-**Configuration File Location:**
-- \`~/.copilot/mcp-config.json\` OR
-- \`~/.config/mcp-config.json\`
+2. **Install PersistQ MCP Server**:
+\`\`\`bash
+npm install -g persistq
+\`\`\`
 
-**Configuration:**
+## Configuration
+
+Add the following to your Copilot CLI MCP configuration file at \`~/.copilot/mcp-config.json\`:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "persistq": {
+      "command": "persistq",
+      "env": {
+        "PERSISTQ_URL": "${baseUrl}",
+        "PERSISTQ_API_KEY": "${key}"
+      }
+    }
+  }
+}
+\`\`\`
+
+**Alternative (using npx):**
 \`\`\`json
 {
   "mcpServers": {
@@ -183,34 +207,58 @@ To set up PersistQ with GitHub Copilot CLI, add the following to your MCP config
 }
 \`\`\`
 
-## Setup Steps
+## Using PersistQ in Copilot CLI
 
-1. **Install GitHub Copilot CLI** (if not already installed):
+### 1. Start Copilot CLI
 \`\`\`bash
-npm install -g @github/copilot
-copilot /login
+copilot
 \`\`\`
 
-2. **Create or edit the MCP config file**:
-   - Create \`~/.copilot/mcp-config.json\` (or \`~/.config/mcp-config.json\`)
-   - Add the configuration above
+### 2. Check Available MCP Servers
+Type \`/mcp\` in the interactive mode to see all configured MCP servers including PersistQ.
 
-3. **Restart GitHub Copilot CLI** for changes to take effect
+### 3. Use PersistQ Tools
+Copilot will automatically discover and use the following tools when relevant:
 
-4. **Verify the setup**:
-   - The PersistQ tools should be available in your Copilot CLI session
-   - You can check with: \`copilot /mcp list\` (if supported)
+- **\`add_memory\`**: Store new memories
+- **\`search_memory\`**: Semantic search across stored memories
+- **\`get_memory_stats\`**: Get memory statistics
+- **\`list_memories\`**: List memories with filtering
 
-## Available MCP Tools
+### 4. Tool Usage Examples
 
-GitHub Copilot CLI supports the following PersistQ tools:
+**Store a memory:**
+"Store this information: User prefers dark mode and uses TypeScript"
 
-- \`add_memory\`: Store new memories
-- \`search_memory\`: Semantic search across stored memories
-- \`get_memory_stats\`: Get memory statistics
-- \`list_memories\`: List memories with filtering
+**Search memories:**
+"Search my memories for TypeScript preferences"
 
-**Note:** GitHub Copilot CLI currently only supports MCP tools (not resources).
+**List memories:**
+"Show me all memories from the current project"
+
+**Get statistics:**
+"How many memories do I have stored?"
+
+### 5. Control Tool Access (Optional)
+Allow or deny specific tools:
+\`\`\`bash
+# Allow only specific tools
+copilot --allow-tool 'persistq(add_memory)' --allow-tool 'persistq(search_memory)'
+
+# Deny specific tools
+copilot --deny-tool 'persistq(delete_memory)'
+
+# Allow all tools from PersistQ
+copilot --allow-tool 'persistq'
+\`\`\`
+
+## Important Notes
+
+- **MCP Tools Only**: GitHub Copilot CLI currently only supports MCP tools (not resources or prompts)
+- **Automatic Discovery**: Copilot automatically discovers and uses tools when appropriate
+- **Tool Names**: Reference tools as \`persistq(tool_name)\` when using allow/deny flags
+- **Session Persistence**: MCP configuration persists across all Copilot CLI sessions
+- **Environment Variables**: As of version 0.0.340+, use \`\${VAR}\` syntax for env vars
 
 ## Direct API Access (Alternative)
 
