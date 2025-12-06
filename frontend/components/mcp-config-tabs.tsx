@@ -159,16 +159,9 @@ const getCopilotPrompt = (apiKey?: string | null, apiUrl?: string) => {
 
 You now have access to the PersistQ API for persistent long-term memory storage via the Model Context Protocol (MCP).
 
-## Prerequisites
+## Installation
 
-1. **Install GitHub Copilot CLI**:
-\`\`\`bash
-npm install -g @github/copilot
-gh auth login
-copilot /login
-\`\`\`
-
-2. **Install PersistQ MCP Server**:
+Install the PersistQ MCP Server:
 \`\`\`bash
 npm install -g persistq
 \`\`\`
