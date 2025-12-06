@@ -295,6 +295,27 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   modalContent: 'bg-[#181818]',
                 },
               }}
+              userProfileProps={{
+                appearance: {
+                  baseTheme: dark,
+                  variables: {
+                    colorPrimary: '#00e0ff',
+                    colorBackground: '#181818',
+                    colorInputBackground: '#2a2a2a',
+                    colorInputText: '#ffffff',
+                  },
+                  elements: {
+                    card: 'bg-[#181818] border border-[#2a2a2a]',
+                    navbar: 'bg-[#181818]',
+                    navbarButton: 'hover:bg-[#1e1e1e] text-white',
+                    pageScrollBox: 'bg-[#181818]',
+                    formButtonPrimary: 'bg-[#00e0ff] hover:bg-[#00c8e6] text-black',
+                    footer: '!hidden',
+                    headerTitle: 'text-white',
+                    headerSubtitle: 'text-gray-400',
+                  },
+                },
+              }}
             >
               <UserButton.MenuItems>
                 <UserButton.Link
