@@ -382,34 +382,59 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-surface p-6">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-glow">
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="p-6 pb-4">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-accent-purple/20 to-accent-cyan/20 border border-accent-purple/30">
             <Terminal className="h-5 w-5 text-accent-purple" />
           </div>
           <div>
-            <h2 className="text-base font-medium text-foreground">MCP Integration</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h2 className="text-base font-semibold text-foreground">MCP Integration</h2>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Configure PersistQ for Claude Code or GitHub Copilot CLI
             </p>
           </div>
         </div>
-      </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="claude">Claude Code</TabsTrigger>
-          <TabsTrigger value="copilot">GitHub Copilot CLI</TabsTrigger>
-        </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="border-b border-border mb-6">
+            <div className="flex gap-1">
+              <button
+                onClick={() => setActiveTab("claude")}
+                className={`relative px-4 py-2.5 text-sm font-medium transition-all ${
+                  activeTab === "claude"
+                    ? "text-accent-purple"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Claude Code
+                {activeTab === "claude" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-purple to-accent-cyan" />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab("copilot")}
+                className={`relative px-4 py-2.5 text-sm font-medium transition-all ${
+                  activeTab === "copilot"
+                    ? "text-accent-cyan"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                GitHub Copilot CLI
+                {activeTab === "copilot" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-cyan to-accent-purple" />
+                )}
+              </button>
+            </div>
+          </div>
 
-        <TabsContent value="claude" className="space-y-4">
-          <div className="flex items-center gap-2">
+        <TabsContent value="claude" className="space-y-4 mt-0 pb-6">
+          <div className="flex items-center gap-3">
             <Button
               onClick={() => handleCopy('claude')}
               size="sm"
               variant="outline"
-              className="bg-accent-purple/10 hover:bg-accent-purple/20 text-accent-purple border-accent-purple/30"
+              className="flex-1 bg-gradient-to-r from-accent-purple/10 to-accent-purple/5 hover:from-accent-purple/20 hover:to-accent-purple/10 text-accent-purple border-accent-purple/30 font-medium"
             >
               {claudeCopied ? (
                 <>
@@ -419,7 +444,7 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
               ) : (
                 <>
                   <Copy className="h-4 w-4 mr-2" />
-                  Copy prompt
+                  Copy Prompt
                 </>
               )}
             </Button>
@@ -427,10 +452,11 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
               <DialogTrigger asChild>
                 <Button
                   size="sm"
-                  className="bg-accent-cyan/10 hover:bg-accent-cyan/20 text-accent-cyan border-accent-cyan/30"
+                  variant="outline"
+                  className="flex-1 bg-gradient-to-r from-accent-cyan/10 to-accent-cyan/5 hover:from-accent-cyan/20 hover:to-accent-cyan/10 text-accent-cyan border-accent-cyan/30 font-medium"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  View prompt
+                  View Full Prompt
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col bg-surface border-border">
@@ -501,13 +527,13 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
           </div>
         </TabsContent>
 
-        <TabsContent value="copilot" className="space-y-4">
-          <div className="flex items-center gap-2">
+        <TabsContent value="copilot" className="space-y-4 mt-0 pb-6">
+          <div className="flex items-center gap-3">
             <Button
               onClick={() => handleCopy('copilot')}
               size="sm"
               variant="outline"
-              className="bg-accent-purple/10 hover:bg-accent-purple/20 text-accent-purple border-accent-purple/30"
+              className="flex-1 bg-gradient-to-r from-accent-cyan/10 to-accent-cyan/5 hover:from-accent-cyan/20 hover:to-accent-cyan/10 text-accent-cyan border-accent-cyan/30 font-medium"
             >
               {copilotCopied ? (
                 <>
@@ -517,7 +543,7 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
               ) : (
                 <>
                   <Copy className="h-4 w-4 mr-2" />
-                  Copy config
+                  Copy Config
                 </>
               )}
             </Button>
@@ -525,10 +551,11 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
               <DialogTrigger asChild>
                 <Button
                   size="sm"
-                  className="bg-accent-cyan/10 hover:bg-accent-cyan/20 text-accent-cyan border-accent-cyan/30"
+                  variant="outline"
+                  className="flex-1 bg-gradient-to-r from-accent-purple/10 to-accent-purple/5 hover:from-accent-purple/20 hover:to-accent-purple/10 text-accent-purple border-accent-purple/30 font-medium"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  View setup guide
+                  View Setup Guide
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col bg-surface border-border">
@@ -598,7 +625,8 @@ export function McpConfigTabs({ apiKey, apiUrl }: McpConfigTabsProps = {}) {
             </Dialog>
           </div>
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   )
 }
