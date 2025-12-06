@@ -323,12 +323,12 @@ export class DodoProvider implements IBillingProvider {
       throw new Error(`Unknown Dodo product ID: ${sub.product_id}. Cannot determine plan.`);
     }
 
-    // For subscription renewal date, use expires_at for yearly subscriptions
-    // For monthly subscriptions, next_billing_date is correct
-    const isYearly = planInfo.interval === "yearly";
-    const renewalDate = isYearly
-      ? (sub.expires_at || sub.next_billing_date)
-      : sub.next_billing_date;
+    // Dodo API fields:
+    // - next_billing_date: Next payment charge date (when customer is billed)
+    // - expires_at: Subscription expiration (can be years in future for multi-period subs)
+    //
+    // We use next_billing_date because that's when users are actually charged
+    const renewalDate = sub.next_billing_date;
 
     return {
       id: sub.subscription_id,
@@ -689,12 +689,12 @@ export class DodoProvider implements IBillingProvider {
       throw new Error(`Unknown Dodo product ID: ${dodoSub.product_id}. Cannot determine plan.`);
     }
 
-    // For subscription renewal date, use expires_at for yearly subscriptions
-    // For monthly subscriptions, next_billing_date is correct
-    const isYearly = planInfo.interval === "yearly";
-    const renewalDate = isYearly
-      ? (dodoSub.expires_at || dodoSub.next_billing_date || dodoSub.current_period_end)
-      : (dodoSub.next_billing_date || dodoSub.current_period_end);
+    // Dodo API fields:
+    // - next_billing_date: Next payment charge date
+    // - expires_at: Subscription expiration (can be far in future for multi-period subs)
+    //
+    // We use next_billing_date because that's when users are actually charged
+    const renewalDate = dodoSub.next_billing_date || dodoSub.current_period_end;
 
     return {
       id: subscriptionId,
