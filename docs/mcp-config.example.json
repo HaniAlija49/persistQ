@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "persistq": {
+      "command": "npx",
+      "args": ["-y", "persistq"],
+      "env": {
+        "PERSISTQ_URL": "${PERSISTQ_URL}",
+        "PERSISTQ_API_KEY": "${PERSISTQ_API_KEY}"
+      }
+    }
+  }
+}
