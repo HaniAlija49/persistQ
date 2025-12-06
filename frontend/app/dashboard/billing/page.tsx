@@ -87,6 +87,7 @@ export default function BillingPage() {
     }
 
     setIsLoading(false)
+    return data // Return the data so we can check it in polling
   }
 
   // Handle plan change
@@ -146,16 +147,17 @@ export default function BillingPage() {
       const maxAttempts = 10
       const pollInterval = setInterval(async () => {
         attempts++
-        await loadBillingData()
+        const freshData = await loadBillingData()
 
-        // Check if plan has changed
-        if (billingData?.subscription.planId === planId && billingData?.subscription.interval === interval) {
+        // Check if plan has changed (use freshData, not stale billingData)
+        if (freshData?.subscription.planId === planId && freshData?.subscription.interval === interval) {
           clearInterval(pollInterval)
           setIsActionLoading(false)
           toast({
             title: "Plan Updated Successfully",
             description: `You're now on the ${planId} plan!`,
           })
+          return
         }
 
         // Stop polling after max attempts
