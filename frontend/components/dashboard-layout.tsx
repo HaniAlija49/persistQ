@@ -3,19 +3,10 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useUser, SignOutButton, useAuth } from "@clerk/nextjs"
+import { useUser, UserButton, useAuth } from "@clerk/nextjs"
 import * as Sentry from '@sentry/nextjs'
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LayoutDashboard, Key, Brain, Settings, Menu, X, CreditCard } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -286,26 +277,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </Link>
             )}
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-md p-0">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-accent-purple text-foreground text-xs">HA</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <SignOutButton>
-                  <DropdownMenuItem>Log out</DropdownMenuItem>
-                </SignOutButton>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserButton>
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="API Keys"
+                  labelIcon={<Key className="w-4 h-4" />}
+                  href="/dashboard/api-keys"
+                />
+                <UserButton.Link
+                  label="Billing"
+                  labelIcon={<CreditCard className="w-4 h-4" />}
+                  href="/dashboard/billing"
+                />
+                <UserButton.Link
+                  label="Settings"
+                  labelIcon={<Settings className="w-4 h-4" />}
+                  href="/dashboard/settings"
+                />
+              </UserButton.MenuItems>
+            </UserButton>
           </div>
         </header>
 
