@@ -104,7 +104,7 @@ export function SubscriptionCard({
         {isScheduledForCancellation && subscription.currentPeriodEnd && (
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium">
-              ⏰ Scheduled for Cancellation
+              Scheduled for Cancellation
             </p>
             <p className="text-xs text-yellow-600/80 dark:text-yellow-400/80 mt-1">
               Your subscription will end on {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
@@ -116,7 +116,7 @@ export function SubscriptionCard({
         {isFullyCancelled && (
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <p className="text-sm text-red-600 dark:text-red-400 font-medium">
-              🚫 Subscription Cancelled
+              Subscription Cancelled
             </p>
             <p className="text-xs text-red-600/80 dark:text-red-400/80 mt-1">
               Click "Renew Subscription" below to create a new subscription
