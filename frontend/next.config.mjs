@@ -14,8 +14,18 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Apply to all routes except dashboard
-        source: '/((?!dashboard).*)',
+        // Apply index, follow to the home page
+        source: '/',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'index, follow',
+          },
+        ],
+      },
+      {
+        // Apply index, follow to all public pages
+        source: '/:path((?!dashboard).*)',
         headers: [
           {
             key: 'X-Robots-Tag',
