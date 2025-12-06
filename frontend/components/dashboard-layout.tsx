@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useUser, UserButton, useAuth } from "@clerk/nextjs"
+import { dark } from "@clerk/themes"
 import * as Sentry from '@sentry/nextjs'
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -277,7 +278,24 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </Link>
             )}
 
-            <UserButton>
+            <UserButton
+              appearance={{
+                baseTheme: dark,
+                variables: {
+                  colorPrimary: '#00e0ff',
+                  colorBackground: '#181818',
+                  colorInputBackground: '#2a2a2a',
+                  colorInputText: '#ffffff',
+                },
+                elements: {
+                  userButtonPopoverCard: 'bg-[#181818] border border-[#2a2a2a]',
+                  userButtonPopoverActionButton: 'hover:bg-[#1e1e1e]',
+                  userButtonPopoverActionButtonText: 'text-white',
+                  userButtonPopoverFooter: '!hidden',
+                  modalContent: 'bg-[#181818]',
+                },
+              }}
+            >
               <UserButton.MenuItems>
                 <UserButton.Link
                   label="API Keys"
