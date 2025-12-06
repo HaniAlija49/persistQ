@@ -221,13 +221,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <div className="lg:pl-56">
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 px-6">
+          {/* Left side - can add breadcrumbs or context here if needed */}
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 rounded-md px-2 py-1 text-sm font-medium text-foreground hover:bg-accent-hover transition-colors">
-              <span>MemoryHub</span>
-              <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+            {/* Removed redundant project switcher - logo already shows PersistQ */}
           </div>
 
           <div className="flex items-center gap-3">
