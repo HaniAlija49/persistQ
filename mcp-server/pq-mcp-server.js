@@ -19,6 +19,24 @@ const PERSISTQ_URL = process.env.PERSISTQ_URL || 'http://localhost:3000';
 const API_KEY = process.env.PERSISTQ_API_KEY || 'pq_9df422f134ef9ec93e8337dd5bde0540dfd3d0de714e6e00379f3f7f174cfdff';
 const TOPIC = process.env.PERSISTQ_TOPIC || 'ClaudeConversations';
 
+// Global error handlers - all logs MUST go to stderr to keep stdout clean
+process.on('uncaughtException', (error) => {
+  console.error('[PersistQ MCP Server] FATAL: Uncaught exception:', error.message);
+  console.error(error.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[PersistQ MCP Server] FATAL: Unhandled promise rejection:', reason);
+  process.exit(1);
+});
+
+// Log configuration on startup (stderr only)
+console.error('[PersistQ MCP Server] Configuration:');
+console.error(`  PERSISTQ_URL: ${PERSISTQ_URL}`);
+console.error(`  PERSISTQ_TOPIC: ${TOPIC}`);
+console.error(`  API Key: ${API_KEY ? '[SET]' : '[NOT SET]'}`);
+
 // Create MCP server
 const server = new Server(
   {
@@ -29,6 +47,8 @@ const server = new Server(
     capabilities: {
       tools: {},
       resources: {}
+      // Note: GitHub Copilot CLI only supports tools (not resources)
+      // Resources remain available for Claude Code compatibility
     }
   }
 );
@@ -164,8 +184,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error(`Unknown tool: ${name}`);
     }
   } catch (error) {
+    // Log error to stderr for debugging (never stdout)
+    console.error(`[PersistQ MCP Server] Tool '${name}' error:`, error.message);
+    if (error.response) {
+      console.error(`  HTTP Status: ${error.response.status}`);
+      console.error(`  Response Data:`, JSON.stringify(error.response.data));
+    }
+
     return {
-      content: [{ type: 'text', text: `Error: ${error.message}` }],
+      content: [{
+        type: 'text',
+        text: `Error executing ${name}: ${error.message}`
+      }],
       isError: true
     };
   }
@@ -227,7 +257,8 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
     throw new Error(`Unknown resource: ${uri}`);
   } catch (error) {
-    throw new Error(`Failed to read resource: ${error.message}`);
+    console.error(`[PersistQ MCP Server] Resource read error for '${uri}':`, error.message);
+    throw new Error(`Failed to read resource '${uri}': ${error.message}`);
   }
 });
 
@@ -236,9 +267,12 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('[PersistQ MCP Server] Started on stdio');
+  console.error('[PersistQ MCP Server] Protocol versions supported: 2025-06-18, 2025-03-26, 2024-11-05, 2024-10-07');
+  console.error('[PersistQ MCP Server] Ready to receive requests');
 }
 
 main().catch((error) => {
-  console.error('[PersistQ MCP Server] Fatal error:', error);
+  console.error('[PersistQ MCP Server] Fatal startup error:', error.message);
+  console.error('Stack trace:', error.stack);
   process.exit(1);
 });

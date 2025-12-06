@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link"
-import { McpPromptCard } from "@/components/mcp-prompt-card"
+import { McpConfigTabs } from "@/components/mcp-config-tabs"
 
 export default function DashboardPage() {
   const api = useApi()
@@ -277,7 +277,7 @@ export default function DashboardPage() {
       </div>
 
       {/* MCP Integration */}
-      <McpPromptCard
+      <McpConfigTabs
         apiKey={api.apiKey}
         apiUrl={process.env.NEXT_PUBLIC_API_URL}
       />

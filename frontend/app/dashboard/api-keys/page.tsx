@@ -8,7 +8,7 @@ import { useApi } from "@/hooks/use-api"
 import { AuthService } from "@/services"
 import { copyToClipboard } from "@/lib/utils"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { McpPromptCard } from "@/components/mcp-prompt-card"
+import { McpConfigTabs } from "@/components/mcp-config-tabs"
 
 export default function ApiKeysPage() {
   const api = useApi()
@@ -99,7 +99,7 @@ export default function ApiKeysPage() {
 
         <ApiKeyDisplay apiKey={api.apiKey} isLoading={api.isLoading} />
 
-        <McpPromptCard
+        <McpConfigTabs
           apiKey={api.apiKey}
           apiUrl={process.env.NEXT_PUBLIC_API_URL}
         />

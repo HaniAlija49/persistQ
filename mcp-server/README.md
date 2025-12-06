@@ -93,6 +93,44 @@ Add to your Claude Code MCP configuration (`~/.claude/mcp.json`):
 }
 ```
 
+## Integration with GitHub Copilot CLI
+
+Add to your Copilot CLI MCP configuration (`~/.copilot/mcp-config.json` or `~/.config/mcp-config.json`):
+
+```json
+{
+  "mcpServers": {
+    "persistq": {
+      "command": "node",
+      "args": ["D:/Projects/MemoryHub-Monorepo/mcp-server/pq-mcp-server.js"],
+      "env": {
+        "PERSISTQ_URL": "http://localhost:3000",
+        "PERSISTQ_API_KEY": "${PERSISTQ_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**Important Notes:**
+- GitHub Copilot CLI currently **only supports MCP tools** (not resources or prompts)
+- The following 4 tools are available in Copilot CLI:
+  - `add_memory` - Store new memories
+  - `search_memory` - Search stored memories
+  - `get_memory_stats` - Get memory statistics
+  - `list_memories` - List memories with filtering
+- Resources (`persistq://memories/all`, `persistq://stats`) are only available in Claude Code
+
+### Testing with MCP Inspector
+
+Validate the server using the official MCP Inspector:
+
+```bash
+npx @modelcontextprotocol/inspector node D:/Projects/MemoryHub-Monorepo/mcp-server/pq-mcp-server.js
+```
+
+This will open a web interface to test protocol compliance, tool execution, and error handling.
+
 ## Architecture
 
 ```
