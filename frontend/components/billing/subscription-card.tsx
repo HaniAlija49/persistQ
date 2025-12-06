@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, CreditCard } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
 import type { Subscription, Plan } from "@/lib/billing-types"
 
 interface SubscriptionCardProps {
@@ -95,7 +94,11 @@ export function SubscriptionCard({
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              Renews {formatDistanceToNow(new Date(subscription.currentPeriodEnd), { addSuffix: true })}
+              Next billing on {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })}
             </span>
           </div>
         )}
