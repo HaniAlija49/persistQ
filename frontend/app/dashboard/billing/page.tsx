@@ -54,9 +54,16 @@ export default function BillingPage() {
     }
   }, [toast, api.isReady])
 
-  // Load billing data
+  // Load billing data (skip if coming from checkout redirect to avoid double load)
   useEffect(() => {
-    if (api.isReady) {
+    if (typeof window === 'undefined') return
+
+    // Check if this is a checkout success redirect
+    const params = new URLSearchParams(window.location.search)
+    const isCheckoutSuccess = params.get('success') === 'true' && params.get('subscription_id')
+
+    // Skip initial load if checkout success - the timeout above will handle it
+    if (!isCheckoutSuccess && api.isReady) {
       loadBillingData()
     }
   }, [api.isReady])
