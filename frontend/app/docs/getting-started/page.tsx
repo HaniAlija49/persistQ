@@ -46,15 +46,6 @@ export default function GettingStartedPage() {
         </div>
       </header>
 
-      <div className="border-b border-border/40 bg-accent-cyan/5">
-        <div className="container mx-auto px-4 py-3">
-          <p className="text-sm text-center">
-            <span className="font-semibold text-accent-cyan">Preview Documentation</span> - Code examples shown are
-            illustrative. Actual implementation may vary.
-          </p>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Breadcrumb */}
@@ -73,12 +64,32 @@ export default function GettingStartedPage() {
               Learn how to integrate PersistQ into your AI application in under 5 minutes.
             </p>
 
+            <h2 className="text-2xl font-bold mt-12 mb-4">Choose Your Integration</h2>
+            <p className="text-muted-foreground mb-4">
+              PersistQ offers two ways to integrate:
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              <div className="p-6 rounded-lg border border-border bg-surface">
+                <h3 className="font-semibold mb-2 text-accent-cyan">TypeScript/JavaScript SDK</h3>
+                <p className="text-sm text-muted-foreground mb-3">For web apps, Node.js backends, and serverless functions</p>
+                <code className="text-xs bg-background px-2 py-1 rounded">persistq-sdk</code>
+              </div>
+              <div className="p-6 rounded-lg border border-border bg-surface">
+                <h3 className="font-semibold mb-2 text-accent-purple">MCP Server</h3>
+                <p className="text-sm text-muted-foreground mb-3">For Claude Code and GitHub Copilot CLI integration</p>
+                <code className="text-xs bg-background px-2 py-1 rounded">persistq</code>
+              </div>
+            </div>
+
             <h2 className="text-2xl font-bold mt-12 mb-4">Installation</h2>
-            <p className="text-muted-foreground mb-4">Install the PersistQ SDK for your preferred language:</p>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">TypeScript/JavaScript SDK</h3>
+            <p className="text-muted-foreground mb-4">Install via npm:</p>
 
             <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
               <button
-                onClick={() => copyCode("npm install @persistq/sdk", "npm")}
+                onClick={() => copyCode("npm install persistq-sdk", "npm")}
                 className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
               >
                 {copiedSection === "npm" ? (
@@ -88,137 +99,260 @@ export default function GettingStartedPage() {
                 )}
               </button>
               <pre className="text-sm overflow-x-auto">
-                <code>npm install @persistq/sdk</code>
+                <code>npm install persistq-sdk</code>
               </pre>
             </div>
 
+            <h3 className="text-xl font-semibold mt-8 mb-3">MCP Server (for AI tools)</h3>
+            <p className="text-muted-foreground mb-4">Install globally:</p>
+
             <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
               <button
-                onClick={() => copyCode("pip install persistq", "pip")}
+                onClick={() => copyCode("npm install -g persistq", "mcp")}
                 className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
               >
-                {copiedSection === "pip" ? (
+                {copiedSection === "mcp" ? (
                   <Check className="w-4 h-4 text-accent-cyan" />
                 ) : (
                   <Copy className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
               <pre className="text-sm overflow-x-auto">
-                <code>pip install persistq</code>
+                <code>npm install -g persistq</code>
               </pre>
             </div>
 
             <h2 className="text-2xl font-bold mt-12 mb-4">Authentication</h2>
             <p className="text-muted-foreground mb-4">
               Get your API key from the{" "}
-              <Link href="/dashboard/api-keys" className="text-accent-cyan hover:underline">
+              <Link href="/dashboard" className="text-accent-cyan hover:underline">
                 dashboard
               </Link>{" "}
-              and set it as an environment variable:
+              after signing up:
+            </p>
+
+            <div className="p-4 rounded-lg border border-border bg-accent-cyan/5 mb-8">
+              <p className="text-sm">
+                <strong className="text-accent-cyan">Tip:</strong> Your API key starts with{" "}
+                <code className="bg-background px-2 py-1 rounded text-xs">mh_</code>
+              </p>
+            </div>
+
+            <h2 className="text-2xl font-bold mt-12 mb-4">Quick Start: TypeScript SDK</h2>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">1. Initialize Client</h3>
+            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
+              <button
+                onClick={() =>
+                  copyCode(
+                    `import { createClient } from 'persistq-sdk'
+
+const client = createClient({
+  baseUrl: 'https://memoryhub-cloud.onrender.com',
+  apiKey: 'your-api-key-here',
+})`,
+                    "init",
+                  )
+                }
+                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
+              >
+                {copiedSection === "init" ? (
+                  <Check className="w-4 h-4 text-accent-cyan" />
+                ) : (
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              <pre className="text-sm overflow-x-auto">
+                <code>{`import { createClient } from 'persistq-sdk'
+
+const client = createClient({
+  baseUrl: 'https://memoryhub-cloud.onrender.com',
+  apiKey: 'your-api-key-here',
+})`}</code>
+              </pre>
+            </div>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">2. Store a Memory</h3>
+            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
+              <button
+                onClick={() =>
+                  copyCode(
+                    `const result = await client.createMemory(
+  'User prefers dark mode and compact layouts',
+  'preferences',
+  { tags: ['ui', 'settings'] }
+)
+
+if (result.status === 'success') {
+  console.log('Memory created:', result.data?.memoryId)
+}`,
+                    "create",
+                  )
+                }
+                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
+              >
+                {copiedSection === "create" ? (
+                  <Check className="w-4 h-4 text-accent-cyan" />
+                ) : (
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              <pre className="text-sm overflow-x-auto">
+                <code>{`const result = await client.createMemory(
+  'User prefers dark mode and compact layouts',
+  'preferences',
+  { tags: ['ui', 'settings'] }
+)
+
+if (result.status === 'success') {
+  console.log('Memory created:', result.data?.memoryId)
+}`}</code>
+              </pre>
+            </div>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">3. Search Memories</h3>
+            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
+              <button
+                onClick={() =>
+                  copyCode(
+                    `const results = await client.searchMemories('user interface preferences', {
+  limit: 5,
+  threshold: 0.7,
+})
+
+if (results.status === 'success') {
+  results.data?.forEach(memory => {
+    console.log(memory.content, 'Similarity:', memory.similarity)
+  })
+}`,
+                    "search",
+                  )
+                }
+                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
+              >
+                {copiedSection === "search" ? (
+                  <Check className="w-4 h-4 text-accent-cyan" />
+                ) : (
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              <pre className="text-sm overflow-x-auto">
+                <code>{`const results = await client.searchMemories('user interface preferences', {
+  limit: 5,
+  threshold: 0.7,
+})
+
+if (results.status === 'success') {
+  results.data?.forEach(memory => {
+    console.log(memory.content, 'Similarity:', memory.similarity)
+  })
+}`}</code>
+              </pre>
+            </div>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">4. List Memories</h3>
+            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
+              <button
+                onClick={() =>
+                  copyCode(
+                    `const memories = await client.listMemories({
+  project: 'preferences',
+  limit: 10,
+  offset: 0,
+})
+
+if (memories.status === 'success' && memories.data) {
+  console.log('Total memories:', memories.data.total)
+  console.log('Memories:', memories.data.memories)
+}`,
+                    "list",
+                  )
+                }
+                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
+              >
+                {copiedSection === "list" ? (
+                  <Check className="w-4 h-4 text-accent-cyan" />
+                ) : (
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              <pre className="text-sm overflow-x-auto">
+                <code>{`const memories = await client.listMemories({
+  project: 'preferences',
+  limit: 10,
+  offset: 0,
+})
+
+if (memories.status === 'success' && memories.data) {
+  console.log('Total memories:', memories.data.total)
+  console.log('Memories:', memories.data.memories)
+}`}</code>
+              </pre>
+            </div>
+
+            <h2 className="text-2xl font-bold mt-12 mb-4">Quick Start: MCP Server</h2>
+            <p className="text-muted-foreground mb-4">
+              For Claude Code or GitHub Copilot CLI users:
+            </p>
+
+            <h3 className="text-xl font-semibold mt-8 mb-3">1. Configure Claude Code</h3>
+            <p className="text-muted-foreground mb-4">
+              Add to your <code className="bg-background px-2 py-1 rounded text-xs">~/.claude/mcp.json</code>:
             </p>
 
             <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
               <button
-                onClick={() => copyCode("export PERSISTQ_API_KEY=pq_your_api_key_here", "env")}
-                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
-              >
-                {copiedSection === "env" ? (
-                  <Check className="w-4 h-4 text-accent-cyan" />
-                ) : (
-                  <Copy className="w-4 h-4 text-muted-foreground" />
-                )}
-              </button>
-              <pre className="text-sm overflow-x-auto">
-                <code>export PERSISTQ_API_KEY=pq_your_api_key_here</code>
-              </pre>
-            </div>
-
-            <h2 className="text-2xl font-bold mt-12 mb-4">Your First Request</h2>
-            <p className="text-muted-foreground mb-4">Store your first memory:</p>
-
-            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
-              <button
                 onClick={() =>
                   copyCode(
-                    `import { PersistQ } from '@persistq/sdk';
-
-const pq = new PersistQ(process.env.PERSISTQ_API_KEY);
-
-// Store a memory
-const memory = await pq.memories.create({
-  content: 'User prefers dark mode and compact layouts',
-  group: 'preferences',
-  tags: ['ui', 'settings']
-});
-
-console.log('Memory stored:', memory.id);`,
-                    "first",
+                    `{
+  "mcpServers": {
+    "persistq": {
+      "command": "persistq",
+      "env": {
+        "PERSISTQ_URL": "https://memoryhub-cloud.onrender.com",
+        "PERSISTQ_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}`,
+                    "claude-config",
                   )
                 }
                 className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
               >
-                {copiedSection === "first" ? (
+                {copiedSection === "claude-config" ? (
                   <Check className="w-4 h-4 text-accent-cyan" />
                 ) : (
                   <Copy className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
               <pre className="text-sm overflow-x-auto">
-                <code>{`import { PersistQ } from '@persistq/sdk';
-
-const pq = new PersistQ(process.env.PERSISTQ_API_KEY);
-
-// Store a memory
-const memory = await pq.memories.create({
-  content: 'User prefers dark mode and compact layouts',
-  group: 'preferences',
-  tags: ['ui', 'settings']
-});
-
-console.log('Memory stored:', memory.id);`}</code>
+                <code>{`{
+  "mcpServers": {
+    "persistq": {
+      "command": "persistq",
+      "env": {
+        "PERSISTQ_URL": "https://memoryhub-cloud.onrender.com",
+        "PERSISTQ_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}`}</code>
               </pre>
             </div>
 
-            <h2 className="text-2xl font-bold mt-12 mb-4">Retrieve Memories</h2>
-            <p className="text-muted-foreground mb-4">Query memories by group or search semantically:</p>
+            <h3 className="text-xl font-semibold mt-8 mb-3">2. Use in Claude Code</h3>
+            <p className="text-muted-foreground mb-4">
+              Claude Code will automatically detect the MCP server and you can use it naturally:
+            </p>
 
-            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
-              <button
-                onClick={() =>
-                  copyCode(
-                    `// Get all memories in a group
-const preferences = await pq.memories.list({
-  group: 'preferences'
-});
-
-// Semantic search
-const results = await pq.memories.search({
-  query: 'What are the user UI preferences?',
-  limit: 5
-});`,
-                    "retrieve",
-                  )
-                }
-                className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
-              >
-                {copiedSection === "retrieve" ? (
-                  <Check className="w-4 h-4 text-accent-cyan" />
-                ) : (
-                  <Copy className="w-4 h-4 text-muted-foreground" />
-                )}
-              </button>
-              <pre className="text-sm overflow-x-auto">
-                <code>{`// Get all memories in a group
-const preferences = await pq.memories.list({
-  group: 'preferences'
-});
-
-// Semantic search
-const results = await pq.memories.search({
-  query: 'What are the user UI preferences?',
-  limit: 5
-});`}</code>
-              </pre>
+            <div className="p-4 rounded-lg border border-border bg-surface mb-8">
+              <p className="text-sm text-muted-foreground">
+                "Store this information: The user prefers TypeScript and uses Next.js"
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                "What do you remember about my tech stack preferences?"
+              </p>
             </div>
 
             <h2 className="text-2xl font-bold mt-12 mb-4">Next Steps</h2>
@@ -228,7 +362,7 @@ const results = await pq.memories.search({
                 className="p-6 rounded-lg border border-border bg-surface hover:border-accent-cyan transition-colors"
               >
                 <h3 className="font-semibold mb-2">API Reference</h3>
-                <p className="text-sm text-muted-foreground">Explore all available endpoints and parameters</p>
+                <p className="text-sm text-muted-foreground">Explore all available endpoints and SDK methods</p>
               </Link>
               <Link
                 href="/docs/guides"
@@ -237,6 +371,17 @@ const results = await pq.memories.search({
                 <h3 className="font-semibold mb-2">Guides</h3>
                 <p className="text-sm text-muted-foreground">Learn best practices and advanced patterns</p>
               </Link>
+            </div>
+
+            <div className="p-6 rounded-lg border border-accent-cyan/30 bg-accent-cyan/5 mt-8">
+              <h3 className="font-semibold mb-2 text-accent-cyan">Need Help?</h3>
+              <p className="text-sm text-muted-foreground">
+                Check out our{" "}
+                <Link href="/docs/examples" className="text-accent-cyan hover:underline">
+                  code examples
+                </Link>{" "}
+                or reach out to support.
+              </p>
             </div>
           </article>
         </div>
