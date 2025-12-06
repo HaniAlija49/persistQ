@@ -67,7 +67,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     fetchPlan()
   }, [isLoaded, user, getToken])
 
-  // Check API health
+  // Check API health on load only
   useEffect(() => {
     const checkApiHealth = async () => {
       try {
@@ -88,13 +88,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Check immediately
+    // Check once on component mount
     checkApiHealth()
-
-    // Check every 30 seconds
-    const interval = setInterval(checkApiHealth, 30000)
-
-    return () => clearInterval(interval)
   }, [])
 
   return (
