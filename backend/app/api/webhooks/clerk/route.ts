@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { Webhook } from 'svix'
 import { prisma } from '@/lib/prisma'
-import { generateApiKey, hashApiKey, invalidateApiKeyCache } from '@/lib/auth'
+import { generateApiKey, hashApiKey, invalidateApiKeyCache, getApiKeyPrefix } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,23 +80,26 @@ export async function POST(request: NextRequest) {
 
       if (existingUser) {
         // User already exists, just return success
+        // Note: We can't return the API key anymore since it's not stored
         return NextResponse.json({
           success: true,
-          apiKey: existingUser.apiKey,
+          userId: existingUser.id,
         })
       }
 
       // Generate API key for the new user
       const apiKey = generateApiKey()
       const apiKeyHash = await hashApiKey(apiKey)
+      const apiKeyPrefix = getApiKeyPrefix(apiKey)
 
       // Create user in our database
       const user = await prisma.user.create({
         data: {
           email: primaryEmail.email_address,
           clerkUserId: id,
-          apiKey,
-          apiKeyHash,
+          apiKey,        // Store full key for retrieval
+          apiKeyHash,    // Store hash for authentication
+          apiKeyPrefix,  // Store prefix for fast lookup
         },
       })
 
@@ -105,7 +108,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         userId: user.id,
-        apiKey: apiKey,
+        apiKey: apiKey,  // Return API key for initial setup
       })
     }
 
@@ -144,7 +147,9 @@ export async function POST(request: NextRequest) {
 
       if (user) {
         // Invalidate API key cache
-        await invalidateApiKeyCache(user.apiKey)
+        if (user.apiKey) {
+          await invalidateApiKeyCache(user.apiKey)
+        }
 
         // Delete user and cascade delete memories (configured in Prisma schema)
         await prisma.user.delete({

@@ -23,10 +23,9 @@ export default function ApiKeysPage() {
 
     if (result) {
       toast({
-        title: 'Success',
-        description: 'API key generated successfully',
+        title: 'API Key Generated!',
+        description: 'Your API key is ready to use',
       })
-      // Force page reload to get new key
       window.location.reload()
     } else {
       toast({
@@ -38,7 +37,7 @@ export default function ApiKeysPage() {
   }
 
   const handleRegenerate = async () => {
-    if (!confirm('Are you sure you want to regenerate your API key? This will invalidate your current key.')) {
+    if (!confirm('Are you sure you want to regenerate your API key?\n\nThis will invalidate your current key immediately and require you to update all your applications.')) {
       return
     }
 
@@ -48,10 +47,9 @@ export default function ApiKeysPage() {
 
     if (result) {
       toast({
-        title: 'Success',
-        description: 'API key regenerated successfully',
+        title: 'API Key Regenerated!',
+        description: 'Your new API key is ready to use',
       })
-      // Force page reload to get new key
       window.location.reload()
     } else {
       toast({
@@ -110,7 +108,7 @@ export default function ApiKeysPage() {
 }
 
 function ApiKeyDisplay({ apiKey, isLoading }: { apiKey: string | null; isLoading: boolean }) {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false) // Hidden by default for security
   const { toast } = useToast()
 
   const handleCopyKey = async () => {
@@ -125,6 +123,7 @@ function ApiKeyDisplay({ apiKey, isLoading }: { apiKey: string | null; isLoading
   }
 
   const maskKey = (key: string) => {
+    // Always mask the middle portion for security when not visible
     return key.slice(0, 12) + "•".repeat(40) + key.slice(-8)
   }
 
@@ -163,7 +162,7 @@ function ApiKeyDisplay({ apiKey, isLoading }: { apiKey: string | null; isLoading
       <div className="p-6 space-y-4">
         <div className="flex items-center gap-4">
           <code className="flex-1 text-sm font-mono bg-surface px-4 py-3 rounded-md text-foreground">
-            {isVisible ? apiKey : maskKey(apiKey)}
+            {isVisible ? apiKey : maskKey(apiKey!)}
           </code>
           <button
             onClick={() => setIsVisible(!isVisible)}

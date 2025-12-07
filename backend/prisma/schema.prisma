@@ -13,9 +13,10 @@ datasource db {
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
-  apiKey      String   @unique @map("api_key")
+  apiKey      String?  @unique @map("api_key") // Full API key for easy retrieval
+  apiKeyHash  String?  @unique @map("api_key_hash") // Hashed version for authentication
+  apiKeyPrefix String? @map("api_key_prefix") // First 12 chars for display/lookup
   createdAt   DateTime @default(now()) @map("created_at")
-  apiKeyHash  String?  @unique @map("api_key_hash")
   clerkUserId String?  @unique @map("clerk_user_id")
 
   // Billing fields (provider-agnostic)
@@ -36,7 +37,9 @@ model User {
   usageRecords     UsageRecord[]
   billingAuditLogs BillingAuditLog[]
 
+  @@index([apiKey])
   @@index([apiKeyHash])
+  @@index([apiKeyPrefix])
   @@index([billingCustomerId])
   @@index([subscriptionId])
   @@index([planId])

@@ -79,13 +79,13 @@ export interface CheckoutParams {
 
 export interface ApiKeyStatus {
   hasApiKey: boolean
-  apiKey: string | null
+  apiKey: string | null  // Full key always available for copying
   userId?: string
   email: string | null
 }
 
 export interface GeneratedApiKey {
-  apiKey: string
+  apiKey: string  // Full key
   userId: string
   email: string
 }

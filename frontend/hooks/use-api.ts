@@ -67,11 +67,16 @@ export function useApi() {
           throw new Error('Failed to check API key status')
         }
 
+        // Set the API key for memory/stats API requests
+        if (status.apiKey) {
+          apiClient.setApiKey(status.apiKey)
+        }
+
         setState({
           isLoading: false,
           isReady: status.hasApiKey, // Only ready if API key exists
           hasApiKey: status.hasApiKey,
-          apiKey: status.apiKey,
+          apiKey: status.apiKey,  // Full key always available
           error: null,
         })
       } catch (error) {

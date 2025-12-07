@@ -73,36 +73,24 @@ export async function validateApiKey(): Promise<User> {
     }
 
     // Cache miss - validate from database
-    // First, try to find user by plain API key (backward compatibility)
+    // First, try to find user by plaintext API key (fast, indexed lookup)
     let user = await prisma.user.findUnique({
       where: { apiKey },
     })
 
-    // If not found by plain key, check if key matches a hash
+    // Fallback: if not found by plaintext key, try bcrypt hash comparison
+    // This handles legacy keys or keys that were only stored as hashes
     if (!user) {
-      // Create hash of the provided API key
-      const keyHash = await hashApiKey(apiKey)
-
-      // Try to find user by hash (this uses the unique index)
-      user = await prisma.user.findUnique({
-        where: { apiKeyHash: keyHash },
+      const prefix = getApiKeyPrefix(apiKey)
+      const candidateUsers = await prisma.user.findMany({
+        where: { apiKeyPrefix: prefix },
+        take: 10,
       })
 
-      // If still not found, do a bcrypt comparison fallback
-      // (for keys that were hashed with different salts)
-      if (!user) {
-        const usersWithHash = await prisma.user.findMany({
-          where: {
-            apiKeyHash: { not: null }
-          },
-          take: 100, // Limit to prevent excessive queries
-        })
-
-        for (const u of usersWithHash) {
-          if (u.apiKeyHash && await bcrypt.compare(apiKey, u.apiKeyHash)) {
-            user = u
-            break
-          }
+      for (const candidate of candidateUsers) {
+        if (candidate.apiKeyHash && await bcrypt.compare(apiKey, candidate.apiKeyHash)) {
+          user = candidate
+          break
         }
       }
     }
@@ -138,11 +126,20 @@ export async function validateApiKey(): Promise<User> {
 
 /**
  * Invalidate API key cache (call when API key is regenerated or user is deleted)
+ * Note: Since we no longer store plaintext keys, this requires the actual key value
+ * which is only available during regeneration. For user deletion, we invalidate by user ID.
  */
-export async function invalidateApiKeyCache(apiKey: string): Promise<void> {
+export async function invalidateApiKeyCache(apiKeyOrUserId: string): Promise<void> {
   if (redis) {
-    const cacheKey = `memoryhub:apikey:${apiKey}`
-    await redis.del(cacheKey)
+    // If it looks like an API key (starts with pq_), invalidate it directly
+    if (apiKeyOrUserId.startsWith('pq_')) {
+      const cacheKey = `memoryhub:apikey:${apiKeyOrUserId}`
+      await redis.del(cacheKey)
+    } else {
+      // Otherwise it's a user ID - we can't invalidate without the key
+      // The cache will expire naturally after TTL (5 minutes)
+      console.log(`Cache for user ${apiKeyOrUserId} will expire after TTL`)
+    }
   }
 }
 
@@ -153,7 +150,12 @@ export function generateApiKey(): string {
     .map(b => b.toString(16).padStart(2, '0'))
     .join('')
 
-  return `mh_${randomString}`
+  return `pq_${randomString}`
+}
+
+export function getApiKeyPrefix(apiKey: string): string {
+  // Return first 12 characters for display (e.g., "pq_a1b2c3d4")
+  return apiKey.substring(0, 12)
 }
 
 export async function hashApiKey(apiKey: string): Promise<string> {

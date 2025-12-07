@@ -7,14 +7,14 @@
 import { apiClient } from '@/lib/api-client'
 
 export interface ApiKeyData {
-  apiKey: string
+  apiKey: string  // Full key
   userId: string
   email: string
 }
 
 export interface ApiKeyStatus {
   hasApiKey: boolean
-  apiKey: string | null
+  apiKey: string | null  // Full key always available for copying
   userId?: string
   email: string | null
 }
@@ -22,6 +22,7 @@ export interface ApiKeyStatus {
 export class AuthService {
   /**
    * Check if the user has generated an API key yet
+   * Returns the full API key for easy copying and configuration
    */
   static async checkApiKeyStatus(): Promise<ApiKeyStatus | null> {
     try {
@@ -33,10 +34,6 @@ export class AuthService {
       }
 
       if (response.data) {
-        // If user has an API key, set it for future requests
-        if (response.data.hasApiKey && response.data.apiKey) {
-          apiClient.setApiKey(response.data.apiKey)
-        }
         return response.data
       }
 
@@ -49,7 +46,6 @@ export class AuthService {
 
   /**
    * Generate API key for the current Clerk user (first time)
-   * This should be called when user clicks "Generate API Key" button
    */
   static async generateApiKey(): Promise<ApiKeyData | null> {
     try {
@@ -74,8 +70,7 @@ export class AuthService {
   }
 
   /**
-   * Regenerate the user's API key
-   * This will invalidate the old key
+   * Regenerate the user's API key (invalidates old key)
    */
   static async regenerateApiKey(): Promise<ApiKeyData | null> {
     try {

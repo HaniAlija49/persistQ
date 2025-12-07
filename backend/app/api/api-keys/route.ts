@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { generateApiKey, hashApiKey, invalidateApiKeyCache } from '@/lib/auth'
+import { generateApiKey, hashApiKey, invalidateApiKeyCache, getApiKeyPrefix } from '@/lib/auth'
 import { getClerkUserId } from '@/lib/clerk-auth'
 
 /**
  * GET /api/api-keys
  *
- * Get the current user's API key.
- * Returns null if user hasn't generated an API key yet.
+ * Get the current user's API key info (prefix only for security).
+ * The full API key is only shown once during generation.
  *
  * Requires: Clerk authentication
- * Returns: { apiKey: string | null, hasApiKey: boolean, email: string }
+ * Returns: { apiKeyPrefix: string | null, hasApiKey: boolean, email: string }
  */
 export async function GET(request: NextRequest) {
   try {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    if (!user) {
+    if (!user || !user.apiKey) {
       // User hasn't generated an API key yet
       return NextResponse.json({
         status: 'success',
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       status: 'success',
       data: {
         hasApiKey: true,
-        apiKey: user.apiKey,
+        apiKey: user.apiKey,  // Return full key for copying
         email: user.email,
         userId: user.id,
       },
@@ -69,9 +69,10 @@ export async function GET(request: NextRequest) {
  *
  * Generate a new API key for the authenticated user.
  * Creates the user in the database if they don't exist yet.
+ * Returns the full API key ONCE - it cannot be retrieved again.
  *
  * Requires: Clerk authentication
- * Returns: { apiKey: string, userId: string, email: string }
+ * Returns: { apiKey: string, apiKeyPrefix: string, userId: string, email: string }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
     // Generate API key
     const apiKey = generateApiKey()
     const apiKeyHash = await hashApiKey(apiKey)
+    const apiKeyPrefix = getApiKeyPrefix(apiKey)
 
     // If user exists but has no API key, update them
     // Otherwise create new user
@@ -111,13 +113,13 @@ export async function POST(request: NextRequest) {
       ? await prisma.user.update({
           where: { id: existingUser.id },
           data: {
-            apiKey,
-            apiKeyHash,
+            apiKey,        // Store full key for retrieval
+            apiKeyHash,    // Store hash for authentication
+            apiKeyPrefix,  // Store prefix for fast lookup
           },
           select: {
             id: true,
             email: true,
-            apiKey: true,
           },
         })
       : await prisma.user.create({
@@ -126,13 +128,13 @@ export async function POST(request: NextRequest) {
               (e) => e.id === clerkUser.primaryEmailAddressId
             )?.emailAddress || `user-${clerkUserId}@memoryhub.app`,
             clerkUserId,
-            apiKey,
-            apiKeyHash,
+            apiKey,        // Store full key for retrieval
+            apiKeyHash,    // Store hash for authentication
+            apiKeyPrefix,  // Store prefix for fast lookup
           },
           select: {
             id: true,
             email: true,
-            apiKey: true,
           },
         })
 
@@ -141,7 +143,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       status: 'success',
       data: {
-        apiKey: user.apiKey,
+        apiKey: apiKey,  // Return full key
         userId: user.id,
         email: user.email,
       },
@@ -160,9 +162,10 @@ export async function POST(request: NextRequest) {
  *
  * Regenerate the API key for the authenticated user.
  * Invalidates the old key and generates a new one.
+ * Returns the full API key ONCE - it cannot be retrieved again.
  *
  * Requires: Clerk authentication
- * Returns: { apiKey: string, userId: string, email: string }
+ * Returns: { apiKey: string, apiKeyPrefix: string, userId: string, email: string }
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -190,24 +193,30 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Invalidate old API key cache
-    await invalidateApiKeyCache(existingUser.apiKey)
+    // Store old key for cache invalidation
+    const oldApiKey = existingUser.apiKey
 
     // Generate new API key
     const newApiKey = generateApiKey()
     const newApiKeyHash = await hashApiKey(newApiKey)
+    const newApiKeyPrefix = getApiKeyPrefix(newApiKey)
+
+    // Invalidate old API key cache
+    if (oldApiKey) {
+      await invalidateApiKeyCache(oldApiKey)
+    }
 
     // Update user with new API key
     const user = await prisma.user.update({
       where: { id: existingUser.id },
       data: {
-        apiKey: newApiKey,
-        apiKeyHash: newApiKeyHash,
+        apiKey: newApiKey,      // Store full key for retrieval
+        apiKeyHash: newApiKeyHash,    // Store hash for authentication
+        apiKeyPrefix: newApiKeyPrefix,  // Store prefix for fast lookup
       },
       select: {
         id: true,
         email: true,
-        apiKey: true,
       },
     })
 
@@ -216,7 +225,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       status: 'success',
       data: {
-        apiKey: user.apiKey,
+        apiKey: newApiKey,  // Return full key
         userId: user.id,
         email: user.email,
       },

@@ -39,7 +39,7 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
   // Each route handler will check authentication manually using auth()
   // This prevents middleware from blocking API requests prematurely
 
-  // Add CORS headers for all API routes
+  // Add CORS and security headers for all API routes
   if (request.nextUrl.pathname.startsWith('/api')) {
     const response = NextResponse.next()
 
@@ -62,10 +62,18 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
       response.headers.set('Vary', 'Origin')
     }
 
+    // CORS headers
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-highlight-request, x-highlight-session, traceparent, tracestate, baggage')
     response.headers.set('Access-Control-Allow-Credentials', 'true')
     response.headers.set('Access-Control-Max-Age', '86400') // 24 hours
+
+    // Security headers
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+    response.headers.set('X-XSS-Protection', '1; mode=block')
 
     return response
   }
