@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
+import { SharedHeader } from "@/components/shared-header"
 import { Button } from "@/components/ui/button"
 import { Check, X, ArrowRight } from "lucide-react"
 import { useAuth } from "@clerk/nextjs"
@@ -47,45 +47,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-8 h-8">
-              <Image
-                src="/logo-small.png"
-                alt="PersistQ Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span className="text-xl font-semibold">PersistQ</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="/pricing" className="text-sm text-foreground font-medium">
-              Pricing
-            </Link>
-            <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Docs
-            </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get Started
-              </Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SharedHeader activeLink="pricing" />
 
       {/* Hero */}
       <section className="container mx-auto px-4 pt-20 pb-8 text-center">

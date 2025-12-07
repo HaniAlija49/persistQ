@@ -15,7 +15,8 @@
       "Bash(node pq-mcp-server.js:*)",
       "Bash(npm pack:*)",
       "Bash(npm publish)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__persistq__add_memory"
     ],
     "deny": [],
     "ask": []

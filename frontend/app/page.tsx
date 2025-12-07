@@ -3,12 +3,13 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Check, Shield, Lock } from "lucide-react"
+import { ArrowRight, Check, Shield, Lock, Menu, X } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState("node")
   const [showStickyCTA, setShowStickyCTA] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
 
   // Sticky CTA on scroll
@@ -112,12 +113,12 @@ npm install -g persistq
           showStickyCTA ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
         }`}
       >
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="relative w-6 h-6">
-              <Image src="/logo-small.png" alt="PersistQ" width={24} height={24} className="object-contain" priority />
+            <div className="relative w-8 h-8">
+              <Image src="/logo-small.png" alt="PersistQ" width={32} height={32} className="object-contain" priority />
             </div>
-            <span className="font-semibold">PersistQ</span>
+            <span className="text-xl font-semibold">PersistQ</span>
           </div>
           <Link href="/signup">
             <Button size="sm" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black animate-pulse-subtle">
@@ -144,6 +145,8 @@ npm install -g persistq
             </div>
             <span className="text-xl font-semibold">PersistQ</span>
           </Link>
+
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
@@ -165,7 +168,57 @@ npm install -g persistq
               </Button>
             </Link>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 hover:bg-surface rounded-lg transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur">
+            <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
+              <Link
+                href="#features"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                href="/pricing"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/docs"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Docs
+              </Link>
+              <div className="border-t border-border/40 pt-4 flex flex-col gap-3">
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" size="sm" className="w-full">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Button size="sm" className="w-full bg-accent-cyan hover:bg-accent-cyan/90 text-black">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
