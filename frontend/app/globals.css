@@ -189,3 +189,16 @@
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Hide Clerk Badge - Target internal classes */
+[class*="cl-internal-1dauvpw"],
+[class*="cl-internal-1k7jtru"],
+[class*="cl-internal-pe6vm4"],
+[class*="cl-internal-y44tp9"],
+[class*="cl-internal-1c3puq7"],
+[class*="cl-internal-1scq7x4"],
+[class*="cl-internal-1scxde7"],
+[class*="cl-internal-5ghyhf"],
+[class*="cl-internal-1fpq5at"] {
+  display: none !important;
+}
