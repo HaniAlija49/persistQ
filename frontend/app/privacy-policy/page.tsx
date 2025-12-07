@@ -1,49 +1,10 @@
 import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { SharedHeader } from "@/components/shared-header"
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-8 h-8">
-              <Image
-                src="/logo-small.png"
-                alt="PersistQ Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span className="text-xl font-semibold">PersistQ</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
-            <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Docs
-            </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get Started
-              </Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SharedHeader />
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -108,10 +69,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">Data Retention and Deletion</h2>
             <p className="text-muted-foreground">
-              We retain account and content data for as long as your account exists and as necessary to provide the
-              Service. Upon account deletion we will delete your primary data and cascade-delete memories; backups
-              may be retained for a limited period. You may export your data via the export endpoint. Data retention
-              schedules and exact durations may be provided upon request.
+              We retain account and content data for as long as your account exists and as necessary to provide the Service. Upon account deletion we delete primary data within 30 days and cascade-delete memories immediately; database backups may retain deleted data for up to 90 days for disaster recovery purposes. Usage logs and API call metadata are retained for 12 months for security monitoring and abuse detection. Payment records are retained for 7 years to comply with tax and financial obligations. You may export your data at any time via the <span className="font-mono text-sm">/api/memory/export</span> endpoint or dashboard export feature.
             </p>
           </section>
 
@@ -121,6 +79,13 @@ export default function PrivacyPolicyPage() {
               EU/EEA residents have rights including access, rectification, deletion (right to be forgotten), restriction,
               data portability, and objection. To exercise these rights, contact support@persistq.dev. We will respond
               within legal timeframes.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-3">California Privacy Rights (CCPA/CPRA)</h2>
+            <p className="text-muted-foreground">
+              California residents have rights including: (a) Right to Know what personal information we collect, use, disclose, and sell; (b) Right to Delete personal information (subject to legal exceptions); (c) Right to Opt-Out of the sale or sharing of personal information; (d) Right to Correct inaccurate information; (e) Right to Limit use of sensitive personal information; (f) Right to Non-Discrimination for exercising these rights. We do not sell personal information for monetary consideration and do not share personal information for cross-context behavioral advertising. To exercise your California privacy rights, contact <a href="mailto:privacy@persistq.dev" className="text-accent-cyan hover:underline">privacy@persistq.dev</a> with subject line "California Privacy Rights Request". We will verify your identity and respond within 45 days. You may also visit our <Link href="/do-not-sell" className="text-accent-cyan hover:underline">Do Not Sell or Share My Personal Information</Link> page.
             </p>
           </section>
 
@@ -137,9 +102,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">Cookies and Tracking</h2>
             <p className="text-muted-foreground">
-              We use minimal cookies for authentication and session management. We may use analytics and
-              monitoring tools (Vercel analytics, Highlight.io). To manage cookies, use browser settings or the
-              dashboard controls where available.
+              We use cookies and similar tracking technologies for authentication, session management, and analytics. We categorize cookies as: (a) Strictly Necessary (essential for authentication and security); (b) Functional (preferences and settings); (c) Analytics (aggregated usage data via Vercel Analytics and Highlight.io); and (d) Marketing (currently none). You consent to non-essential cookies via our cookie banner on first visit. Strictly necessary cookies are set automatically as they are essential for the Service to function. You may withdraw consent or manage preferences in your browser settings or via the cookie banner. We maintain records of your consent including timestamp, banner version displayed, and specific choices made. For complete details see our <Link href="/cookie-policy" className="text-accent-cyan hover:underline">Cookie Policy</Link>.
             </p>
           </section>
 
@@ -185,9 +148,14 @@ export default function PrivacyPolicyPage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex gap-4">
-          <Link href="/terms" className="text-accent-cyan hover:underline">Terms of Service</Link>
-          <Link href="/refund-policy" className="text-accent-cyan hover:underline">Refund Policy</Link>
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex flex-wrap gap-4">
+            <Link href="/terms" className="text-accent-cyan hover:underline">Terms of Service</Link>
+            <Link href="/refund-policy" className="text-accent-cyan hover:underline">Refund Policy</Link>
+            <Link href="/cookie-policy" className="text-accent-cyan hover:underline">Cookie Policy</Link>
+            <Link href="/do-not-sell" className="text-accent-cyan hover:underline">Do Not Sell</Link>
+            <Link href="/accessibility" className="text-accent-cyan hover:underline">Accessibility</Link>
+          </div>
         </div>
       </div>
     </div>

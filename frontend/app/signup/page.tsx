@@ -8,45 +8,64 @@ export default function SignUpPage() {
       <SharedHeader />
 
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4">
-        <SignUp
-          routing="hash"
-          appearance={{
-            baseTheme: dark,
-            variables: {
-              colorPrimary: '#00e0ff',
-              colorBackground: '#181818',
-              colorInputBackground: '#2a2a2a',
-              colorInputText: '#ffffff',
-              colorText: '#ffffff',
-              colorTextSecondary: '#a1a1aa',
-            },
-            elements: {
-              rootBox: "w-full max-w-md",
-              card: "bg-[#181818] border border-[#2a2a2a] shadow-xl",
-              headerTitle: "text-white font-semibold",
-              headerSubtitle: "text-gray-400",
-              socialButtonsBlockButton: "bg-[#2a2a2a] border-[#3a3a3a] hover:bg-[#1e1e1e] text-white",
-              socialButtonsBlockButtonText: "text-white font-medium",
-              formButtonPrimary: "bg-gradient-to-r from-[#00E0FF] to-[#8B5CF6] hover:opacity-90 text-white font-medium",
-              footerActionLink: "text-[#00E0FF] hover:text-[#00c8e6]",
-              identityPreviewText: "text-white",
-              identityPreviewEditButton: "text-[#00E0FF]",
-              formFieldLabel: "text-gray-300",
-              formFieldInput: "bg-[#2a2a2a] border-[#3a3a3a] text-white placeholder:text-gray-500",
-              formFieldInputShowPasswordButton: "text-gray-400 hover:text-white",
-              dividerLine: "bg-[#2a2a2a]",
-              dividerText: "text-gray-400",
-              formFieldSuccessText: "text-green-400",
-              formFieldErrorText: "text-red-400",
-              footerActionText: "text-gray-400",
-              otpCodeFieldInput: "bg-[#2a2a2a] border-[#3a3a3a] text-white",
-              // Hide "Secured by Clerk" badge using the footer element
-              footer: "hidden",
-            },
-          }}
-          redirectUrl="/dashboard"
-          signInUrl="/login"
-        />
+        <div className="w-full max-w-md">
+          <SignUp
+            routing="hash"
+            appearance={{
+              baseTheme: dark,
+              variables: {
+                colorPrimary: '#00e0ff',
+                colorBackground: '#181818',
+                colorInputBackground: '#2a2a2a',
+                colorInputText: '#ffffff',
+                colorText: '#ffffff',
+                colorTextSecondary: '#a1a1aa',
+              },
+              elements: {
+                rootBox: "w-full",
+                card: "bg-[#181818] border border-[#2a2a2a] shadow-xl",
+                headerTitle: "text-white font-semibold",
+                headerSubtitle: "text-gray-400",
+                socialButtonsBlockButton: "bg-[#2a2a2a] border-[#3a3a3a] hover:bg-[#1e1e1e] text-white",
+                socialButtonsBlockButtonText: "text-white font-medium",
+                formButtonPrimary: "bg-gradient-to-r from-[#00E0FF] to-[#8B5CF6] hover:opacity-90 text-white font-medium",
+                footerActionLink: "text-[#00E0FF] hover:text-[#00c8e6]",
+                identityPreviewText: "text-white",
+                identityPreviewEditButton: "text-[#00E0FF]",
+                formFieldLabel: "text-gray-300",
+                formFieldInput: "bg-[#2a2a2a] border-[#3a3a3a] text-white placeholder:text-gray-500",
+                formFieldInputShowPasswordButton: "text-gray-400 hover:text-white",
+                dividerLine: "bg-[#2a2a2a]",
+                dividerText: "text-gray-400",
+                formFieldSuccessText: "text-green-400",
+                formFieldErrorText: "text-red-400",
+                footerActionText: "text-gray-400",
+                otpCodeFieldInput: "bg-[#2a2a2a] border-[#3a3a3a] text-white",
+                footer: "hidden",
+              },
+            }}
+            redirectUrl="/dashboard"
+            signInUrl="/login"
+          />
+
+          <div className="mt-4 p-4 bg-[#181818] border border-[#2a2a2a] rounded-lg">
+            <p className="text-sm text-gray-400 text-center">
+              By creating an account, you agree to our{" "}
+              <a href="/terms" className="text-accent-cyan hover:underline" target="_blank" rel="noopener noreferrer">
+                Terms of Service
+              </a>
+              ,{" "}
+              <a href="/privacy-policy" className="text-accent-cyan hover:underline" target="_blank" rel="noopener noreferrer">
+                Privacy Policy
+              </a>
+              , and{" "}
+              <a href="/refund-policy" className="text-accent-cyan hover:underline" target="_blank" rel="noopener noreferrer">
+                Refund Policy
+              </a>
+              .
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )

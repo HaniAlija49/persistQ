@@ -1,49 +1,10 @@
 import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { SharedHeader } from "@/components/shared-header"
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-8 h-8">
-              <Image
-                src="/logo-small.png"
-                alt="PersistQ Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span className="text-xl font-semibold">PersistQ</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
-            <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Docs
-            </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get Started
-              </Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SharedHeader />
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -93,12 +54,26 @@ export default function TermsPage() {
           </section>
 
           <section>
+            <h2 className="text-2xl font-semibold mb-3">Copyright and DMCA Policy</h2>
+            <p className="text-muted-foreground">
+              We respect intellectual property rights and comply with the Digital Millennium Copyright Act (DMCA). If you believe content stored via PersistQ infringes your copyright, submit a takedown notice to our DMCA agent at <a href="mailto:dmca@persistq.dev" className="text-accent-cyan hover:underline">dmca@persistq.dev</a> including: (a) identification of the copyrighted work; (b) identification of the infringing material and its location; (c) your contact information; (d) a statement of good faith belief that use is not authorized; (e) a statement of accuracy under penalty of perjury; and (f) your physical or electronic signature. We maintain a repeat infringer policy and will terminate accounts of users who repeatedly infringe copyrights. Upon receiving a valid takedown notice, we will expeditiously remove or disable access to the allegedly infringing content and notify the user. Users may submit a counter-notice if they believe content was removed in error.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-2xl font-semibold mb-3">Data Ownership and Rights</h2>
             <p className="text-muted-foreground">
               You retain all ownership rights in the content ("Memories") you submit to PersistQ. By submitting content
               you grant PersistQ a non-exclusive, worldwide, royalty-free license to store, process, cache, and otherwise
               use that content solely to provide the Service (including generating embeddings and search indexes). We
               do not claim ownership of your content.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-3">Data Portability and Switching (EU Data Act)</h2>
+            <p className="text-muted-foreground">
+              In compliance with the EU Data Act, we provide: (a) Data export in machine-readable formats (JSON) via our export API; (b) Switching rights allowing you to migrate to alternative providers with two months' notice; (c) Zero switching charges (no fees for data export or account closure); and (d) Technical interoperability through our documented REST API. You may export your data at any time via the dashboard or API endpoint at <span className="font-mono text-sm">/api/memory/export</span>. Upon account termination, we retain data for 30 days to facilitate migration to alternative services.
             </p>
           </section>
 
@@ -171,6 +146,13 @@ export default function TermsPage() {
           </section>
 
           <section>
+            <h2 className="text-2xl font-semibold mb-3">Force Majeure</h2>
+            <p className="text-muted-foreground">
+              We are not liable for delays or failures in performance resulting from circumstances beyond our reasonable control, including but not limited to: acts of God, war, terrorism, riots, embargoes, acts of civil or military authorities, fire, floods, earthquakes, accidents, network infrastructure failures, pandemics, strikes, or shortages of transportation facilities, fuel, energy, labor or materials. During force majeure events, we will make commercially reasonable efforts to resume Service and provide notice of the event and expected resolution timeline where practicable.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-2xl font-semibold mb-3">Limitation of Liability</h2>
             <p className="text-muted-foreground">
               To the maximum extent permitted by applicable law, PersistQ's total liability for any claim arising out of or
@@ -207,6 +189,13 @@ export default function TermsPage() {
           </section>
 
           <section>
+            <h2 className="text-2xl font-semibold mb-3">Arbitration and Class Action Waiver</h2>
+            <p className="text-muted-foreground">
+              You and PersistQ agree that any dispute, claim, or controversy arising out of or relating to these Terms or the Service shall be resolved through binding individual arbitration rather than in court, except you may assert claims in small claims court if they qualify. The arbitration shall be conducted under the rules of the International Chamber of Commerce (ICC) or other mutually agreed arbitration organization. YOU AND PERSISTQ AGREE TO WAIVE THE RIGHT TO A TRIAL BY JURY. YOU AND PERSISTQ AGREE TO WAIVE THE RIGHT TO PARTICIPATE IN A CLASS ACTION, CLASS ARBITRATION, OR OTHER REPRESENTATIVE PROCEEDING. Each party shall bear its own costs of arbitration unless the arbitrator awards costs to the prevailing party. This arbitration provision does not apply to EU residents where prohibited by law or to disputes that cannot be arbitrated under applicable consumer protection laws.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-2xl font-semibold mb-3">Miscellaneous</h2>
             <p className="text-muted-foreground">
               These Terms constitute the entire agreement between you and PersistQ regarding the Service. If any
@@ -225,9 +214,14 @@ export default function TermsPage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex gap-4">
-          <Link href="/privacy-policy" className="text-accent-cyan hover:underline">Privacy Policy</Link>
-          <Link href="/refund-policy" className="text-accent-cyan hover:underline">Refund Policy</Link>
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex flex-wrap gap-4">
+            <Link href="/privacy-policy" className="text-accent-cyan hover:underline">Privacy Policy</Link>
+            <Link href="/refund-policy" className="text-accent-cyan hover:underline">Refund Policy</Link>
+            <Link href="/cookie-policy" className="text-accent-cyan hover:underline">Cookie Policy</Link>
+            <Link href="/do-not-sell" className="text-accent-cyan hover:underline">Do Not Sell</Link>
+            <Link href="/accessibility" className="text-accent-cyan hover:underline">Accessibility</Link>
+          </div>
         </div>
       </div>
     </div>

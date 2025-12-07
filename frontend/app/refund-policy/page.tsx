@@ -1,49 +1,10 @@
 import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { SharedHeader } from "@/components/shared-header"
 
 export default function RefundPolicyPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-8 h-8">
-              <Image
-                src="/logo-small.png"
-                alt="PersistQ Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span className="text-xl font-semibold">PersistQ</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
-            <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Docs
-            </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Get Started
-              </Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SharedHeader />
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -60,11 +21,9 @@ export default function RefundPolicyPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">14-Day Money-Back Guarantee</h2>
+            <h2 className="text-2xl font-semibold mb-3">14-Day Money-Back Guarantee (EU Right of Withdrawal)</h2>
             <p className="text-muted-foreground">
-              We offer a 14-day money-back guarantee from the date of the initial paid purchase for first-time
-              subscribers to paid plans. To request a refund within this window, contact support@persistq.dev with your
-              account details and reason.
+              We offer a 14-day money-back guarantee from the date of the initial paid purchase for first-time subscribers to paid plans, consistent with the EU Consumer Rights Directive. For EU customers, this serves as your statutory right of withdrawal. To request a refund within this window, contact support@persistq.dev with your account details and reason. If you have actively used the Service during the withdrawal period, you may be asked to acknowledge that you requested immediate performance, but refunds will still be honored within the 14-day window for first-time purchases.
             </p>
           </section>
 
@@ -90,8 +49,7 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">How to Request a Refund</h2>
             <p className="text-muted-foreground">
-              Email <a href="mailto:support@persistq.dev" className="text-accent-cyan hover:underline">support@persistq.dev</a> with subject 'Refund Request' including account email, date of purchase, and
-              reason. We may request verification and will respond within 10 business days.
+              Email <a href="mailto:support@persistq.dev" className="text-accent-cyan hover:underline">support@persistq.dev</a> with subject 'Refund Request' including account email, date of purchase, and reason. We may request verification and will respond within 10 business days. Approved refunds are processed to the original payment method within 10 business days of approval, though your financial institution may take an additional 5-10 business days to post the credit.
             </p>
           </section>
 
@@ -128,9 +86,14 @@ export default function RefundPolicyPage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex gap-4">
-          <Link href="/terms" className="text-accent-cyan hover:underline">Terms of Service</Link>
-          <Link href="/privacy-policy" className="text-accent-cyan hover:underline">Privacy Policy</Link>
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex flex-wrap gap-4">
+            <Link href="/terms" className="text-accent-cyan hover:underline">Terms of Service</Link>
+            <Link href="/privacy-policy" className="text-accent-cyan hover:underline">Privacy Policy</Link>
+            <Link href="/cookie-policy" className="text-accent-cyan hover:underline">Cookie Policy</Link>
+            <Link href="/do-not-sell" className="text-accent-cyan hover:underline">Do Not Sell</Link>
+            <Link href="/accessibility" className="text-accent-cyan hover:underline">Accessibility</Link>
+          </div>
         </div>
       </div>
     </div>

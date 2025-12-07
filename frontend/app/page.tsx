@@ -240,7 +240,7 @@ npm install -g persistq
             <Link href="/signup">
               <Button
                 size="lg"
-                className="bg-accent-cyan hover:bg-accent-cyan/90 hover:scale-105 text-black font-medium text-base h-12 px-8 transition-transform duration-200 shadow-lg hover:shadow-xl"
+                className="bg-accent-cyan hover:bg-accent-cyan/90 hover:scale-105 text-black font-medium text-base h-12 px-8 transition-transform duration-200 shadow-lg hover:shadow-xl cta-glow"
               >
                 Start for Free
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -789,6 +789,21 @@ npm install -g persistq
                 <li>
                   <Link href="/refund-policy" className="hover:text-foreground transition-colors">
                     Refund Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cookie-policy" className="hover:text-foreground transition-colors">
+                    Cookie Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/do-not-sell" className="hover:text-foreground transition-colors">
+                    Do Not Sell
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/accessibility" className="hover:text-foreground transition-colors">
+                    Accessibility
                   </Link>
                 </li>
               </ul>
