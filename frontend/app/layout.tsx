@@ -89,6 +89,7 @@ export default function RootLayout({
     >
         <html lang="en" className="dark">
           <head>
+            <meta name="msvalidate.01" content="2647EAA39AC115307C4326CD17C78D65" />
             <link rel="icon" href="/favicon.ico" sizes="any" />
             <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
             <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
