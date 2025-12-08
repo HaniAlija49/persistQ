@@ -288,6 +288,9 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
                       <Badge variant="secondary">
                         {file.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOCX'}
                       </Badge>
+                      <Button variant="outline" size="sm" onClick={resetModal}>
+                        Clear
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -470,23 +473,29 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
 
         {/* Fixed action buttons at the bottom */}
         {activeTab === 'preview' && (
-          <div className="flex justify-end gap-2 pt-4 pb-6 px-6 border-t bg-background">
-            <Button variant="outline" onClick={() => setActiveTab('configure')}>
-              Back
+          <div className="flex justify-between gap-2 pt-4 pb-6 px-6 border-t bg-background">
+            <Button variant="outline" onClick={resetModal} className="min-w-24">
+              <Upload className="h-4 w-4 mr-2" />
+              Upload New
             </Button>
-            <Button onClick={handleSave} disabled={saving} className="min-w-32">
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save to Memories
-                </>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setActiveTab('configure')}>
+                Back
+              </Button>
+              <Button onClick={handleSave} disabled={saving} className="min-w-32">
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save to Memories
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>
