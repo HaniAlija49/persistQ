@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Filter, Grid3x3, List, Plus, MoreVertical, Tag, Calendar, LinkIcon, X, Loader2, AlertCircle, RefreshCw } from "lucide-react"
+import { Search, Filter, Grid3x3, List, Plus, MoreVertical, Tag, Calendar, LinkIcon, X, Loader2, AlertCircle, RefreshCw, Upload } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useApi } from "@/hooks/use-api"
 import { MemoryService, type Memory } from "@/services"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { DocumentUploadModal } from "@/components/document-upload-modal"
 
 export default function MemoriesPage() {
   const api = useApi()
@@ -41,6 +42,7 @@ export default function MemoriesPage() {
   const [newGroupName, setNewGroupName] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all")
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
 
   // Real data from API
   const [memories, setMemories] = useState<Memory[]>([])
@@ -74,6 +76,14 @@ export default function MemoriesPage() {
   }
 
   const handleRefresh = () => {
+    loadMemories()
+  }
+
+  const handleDocumentUploadSuccess = (chunksCount: number) => {
+    toast({
+      title: "Document processed successfully!",
+      description: `Created ${chunksCount} memories from your document.`,
+    })
     loadMemories()
   }
 
@@ -265,6 +275,14 @@ export default function MemoriesPage() {
             <Button onClick={handleRefresh} variant="outline" size="sm">
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
+            </Button>
+            <Button
+              onClick={() => setIsUploadModalOpen(true)}
+              variant="outline"
+              size="sm"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Document
             </Button>
             <Button
               onClick={() => setIsAddDialogOpen(true)}
@@ -605,6 +623,12 @@ export default function MemoriesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DocumentUploadModal
+        open={isUploadModalOpen}
+        onOpenChange={setIsUploadModalOpen}
+        onSuccess={handleDocumentUploadSuccess}
+      />
     </>
   )
 }

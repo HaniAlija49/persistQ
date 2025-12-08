@@ -9,7 +9,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "persistq-sdk": "^1.0.0",
     "@clerk/nextjs": "^6.34.1",
     "@clerk/themes": "^2.4.42",
     "@hookform/resolvers": "^3.10.0",
@@ -53,9 +52,11 @@
     "lucide-react": "^0.454.0",
     "next": "16.0.7",
     "next-themes": "latest",
+    "persistq-sdk": "^1.0.6",
     "react": "19.2.1",
     "react-day-picker": "9.8.0",
     "react-dom": "19.2.1",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "latest",

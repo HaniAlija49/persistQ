@@ -11,7 +11,6 @@ import CodeBlock from "@/components/CodeBlock"
 import PricingToggle from "@/components/PricingToggle"
 import CaseStudies from "@/components/CaseStudies"
 import TechnicalSpecs from "@/components/TechnicalSpecs"
-import WhatsNew from "@/components/WhatsNew"
 import BackToTop from "@/components/BackToTop"
 
 export default function LandingPage() {
@@ -658,9 +657,7 @@ npm install -g persistq
       {/* Cost Calculator Section */}
       <CostCalculator />
 
-      {/* What's New & Roadmap Section */}
-      <WhatsNew />
-
+  
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-32 animate-on-scroll">
         <div className="max-w-4xl mx-auto text-center space-y-8">
