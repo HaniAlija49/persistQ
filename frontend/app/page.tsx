@@ -10,6 +10,7 @@ import CostCalculator from "@/components/CostCalculator"
 import CodeBlock from "@/components/CodeBlock"
 import PricingToggle from "@/components/PricingToggle"
 import CaseStudies from "@/components/CaseStudies"
+import TechnicalSpecs from "@/components/TechnicalSpecs"
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState("node")
@@ -645,6 +646,12 @@ npm install -g persistq
 
       {/* Pricing Section */}
       <PricingToggle />
+
+      {/* Case Studies Section */}
+      <CaseStudies />
+
+      {/* Technical Specifications Section */}
+      <TechnicalSpecs />
 
       {/* Interactive Demo Section */}
       <InteractiveDemo />
