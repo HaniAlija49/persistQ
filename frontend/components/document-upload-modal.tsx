@@ -223,7 +223,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 px-6 overflow-y-auto">
+        <div className="flex-1 min-h-0 px-6 overflow-y-auto custom-scrollbar">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -399,25 +399,44 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
           <TabsContent value="preview" className="mt-4 space-y-4">
             <div className="space-y-4">
               {stats && (
-                <Card>
-                  <CardContent className="p-4">
-                    <h3 className="font-medium mb-3">Processing Results</h3>
-                    <div className="grid grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-500">Chunks</p>
-                        <p className="font-medium">{stats.totalChunks}</p>
+                <Card className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 border-cyan-200 dark:border-cyan-800">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                      <h3 className="text-lg font-semibold text-cyan-900 dark:text-cyan-100">Processing Results</h3>
+                    </div>
+                    <div className="grid grid-cols-4 gap-6">
+                      <div className="text-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-cyan-100 dark:border-cyan-900">
+                        <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
+                          {stats.totalChunks}
+                        </div>
+                        <div className="text-sm text-cyan-700 dark:text-cyan-300 font-medium">
+                          Chunks
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Characters</p>
-                        <p className="font-medium">{stats.totalCharacters.toLocaleString()}</p>
+                      <div className="text-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-cyan-100 dark:border-cyan-900">
+                        <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
+                          {stats.totalCharacters.toLocaleString()}
+                        </div>
+                        <div className="text-sm text-cyan-700 dark:text-cyan-300 font-medium">
+                          Characters
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Processing Time</p>
-                        <p className="font-medium">{formatProcessingTime(stats.processingTime)}</p>
+                      <div className="text-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-cyan-100 dark:border-cyan-900">
+                        <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
+                          {formatProcessingTime(stats.processingTime)}
+                        </div>
+                        <div className="text-sm text-cyan-700 dark:text-cyan-300 font-medium">
+                          Processing Time
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-gray-500">File Type</p>
-                        <p className="font-medium uppercase">{stats.fileType}</p>
+                      <div className="text-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-cyan-100 dark:border-cyan-900">
+                        <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-1 uppercase">
+                          {stats.fileType}
+                        </div>
+                        <div className="text-sm text-cyan-700 dark:text-cyan-300 font-medium">
+                          File Type
+                        </div>
                       </div>
                     </div>
                   </CardContent>

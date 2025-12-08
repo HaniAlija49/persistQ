@@ -82,6 +82,40 @@
   --accent-glow: rgba(0, 224, 255, 0.1);
 }
 
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-cyan);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-purple);
+}
+
+/* Dark mode scrollbar adjustments */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sidebar-primary);
+  border: 1px solid var(--sidebar-border);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
 @theme inline {
   --font-sans: "Geist", "Geist Fallback";
   --font-mono: "Geist Mono", "Geist Mono Fallback";
