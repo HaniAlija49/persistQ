@@ -47,6 +47,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [progress, setProgress] = useState(0);
   const [chunks, setChunks] = useState<DocumentChunk[]>([]);
   const [stats, setStats] = useState<ProcessingStats | null>(null);
@@ -152,23 +153,24 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
   const handleSave = async () => {
     if (chunks.length === 0) return;
 
+    setSaving(true);
     try {
       let savedCount = 0;
       
-    for (const chunk of chunks) {
-      const success = await MemoryService.create({
-        content: chunk.content,
-        project: options.project || undefined,
-        metadata: {
-          ...chunk.metadata,
-          tags: ['document', chunk.metadata.fileType],
-        },
-      });
-      
-      if (success) {
-        savedCount++;
+      for (const chunk of chunks) {
+        const success = await MemoryService.create({
+          content: chunk.content,
+          project: options.project || undefined,
+          metadata: {
+            ...chunk.metadata,
+            tags: ['document', chunk.metadata.fileType],
+          },
+        });
+        
+        if (success) {
+          savedCount++;
+        }
       }
-    }
 
       if (savedCount === chunks.length) {
         toast({
@@ -177,18 +179,24 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
         });
         onSuccess?.(savedCount);
         onOpenChange(false);
-        resetForm();
+        resetModal();
       } else {
-        throw new Error(`Only ${savedCount} out of ${chunks.length} chunks were saved`);
+        toast({
+          title: "Partial Success",
+          description: `Saved ${savedCount} out of ${chunks.length} memories`,
+          variant: "destructive",
+        });
       }
-
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to save memories';
+      setError(errorMessage);
       toast({
-        title: "Save failed",
+        title: "Error",
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -411,7 +419,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
                       <p className="font-medium">{stats.totalCharacters.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Processing Time</p>
+                      <p className="text-gray-500">Time</p>
                       <p className="font-medium">{formatProcessingTime(stats.processingTime)}</p>
                     </div>
                     <div>
@@ -466,9 +474,18 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             <Button variant="outline" onClick={() => setActiveTab('configure')}>
               Back
             </Button>
-            <Button onClick={handleSave} className="min-w-32">
-              <Save className="h-4 w-4 mr-2" />
-              Save to Memories
+            <Button onClick={handleSave} disabled={saving} className="min-w-32">
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save to Memories
+                </>
+              )}
             </Button>
           </div>
         )}
