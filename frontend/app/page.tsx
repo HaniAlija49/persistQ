@@ -317,9 +317,7 @@ npm install -g persistq
             </div>
           </div>
           <CodeBlock
-            code={`$ npm install persistq-sdk
-
-# Ready to use in 2 seconds`}
+            code={`$ npm install persistq-sdk`}
             language="bash"
             title="terminal"
           />
