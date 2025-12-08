@@ -11,6 +11,8 @@ import CodeBlock from "@/components/CodeBlock"
 import PricingToggle from "@/components/PricingToggle"
 import CaseStudies from "@/components/CaseStudies"
 import TechnicalSpecs from "@/components/TechnicalSpecs"
+import StatusBanner from "@/components/StatusBanner"
+import WhatsNew from "@/components/WhatsNew"
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState("node")
@@ -113,6 +115,9 @@ npm install -g persistq
 
   return (
     <div className="min-h-screen bg-background scroll-smooth">
+      {/* Status Banner */}
+      <StatusBanner />
+
       {/* Sticky CTA */}
       <div
         className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border/40 transition-all duration-300 ${
@@ -658,6 +663,9 @@ npm install -g persistq
 
       {/* Cost Calculator Section */}
       <CostCalculator />
+
+      {/* What's New & Roadmap Section */}
+      <WhatsNew />
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-32 animate-on-scroll">
