@@ -22,10 +22,27 @@ export default function BackToTop() {
   }, [])
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
+    const startPosition = window.scrollY
+    const startTime = performance.now()
+    const duration = 600 // 600ms for smooth animation
+
+    const easeOutQuart = (t: number): number => {
+      return 1 - Math.pow(1 - t, 4)
+    }
+
+    const animateScroll = (currentTime: number) => {
+      const elapsedTime = currentTime - startTime
+      const progress = Math.min(elapsedTime / duration, 1)
+      const easeProgress = easeOutQuart(progress)
+
+      window.scrollTo(0, startPosition * (1 - easeProgress))
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll)
+      }
+    }
+
+    requestAnimationFrame(animateScroll)
   }
 
   return (
