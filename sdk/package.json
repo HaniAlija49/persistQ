@@ -1,6 +1,6 @@
 {
   "name": "persistq-sdk",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "TypeScript/JavaScript SDK for PersistQ - AI-powered persistent memory storage",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

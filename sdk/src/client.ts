@@ -107,7 +107,10 @@ export class MemoryHubClient {
         }
       }
 
-      return data
+      return {
+        status: 'success',
+        data: data,
+      } as ApiResponse<T>
     } catch (error) {
       console.error('API request failed:', error)
       return {
