@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -209,8 +210,8 @@ export default function WhatsNew() {
               })}
             </div>
             <div className="mt-8">
-              <Button variant="outline" className="w-full">
-                View All Updates
+              <Button variant="outline" className="w-full" disabled>
+                Coming Soon
               </Button>
             </div>
           </div>
@@ -256,12 +257,14 @@ export default function WhatsNew() {
               Join our community and help shape the future of AI memory.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-                Join Our Discord
+              <Button size="lg" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black" disabled>
+                Coming Soon
               </Button>
-              <Button variant="outline" size="lg">
-                Submit Feature Request
-              </Button>
+              <Link href="/docs">
+                <Button variant="outline" size="lg">
+                  View Documentation
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

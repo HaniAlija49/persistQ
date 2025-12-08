@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
@@ -220,12 +221,16 @@ export default function CostCalculator() {
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">Ready to start saving?</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-              Start Saving Today
-            </Button>
-            <Button variant="outline" size="lg">
-              View Pricing Plans
-            </Button>
+            <Link href="/signup">
+              <Button size="lg" className="bg-accent-cyan hover:bg-accent-cyan/90 text-black">
+                Start Saving Today
+              </Button>
+            </Link>
+            <Link href="/pricing">
+              <Button variant="outline" size="lg">
+                View Pricing Plans
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
