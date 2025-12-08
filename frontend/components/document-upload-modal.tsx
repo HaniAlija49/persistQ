@@ -215,15 +215,15 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-7xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pb-4">
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
             Upload Document
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden px-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -235,7 +235,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="mt-4 h-full overflow-y-auto">
+          <TabsContent value="upload" className="mt-4 h-full overflow-y-auto pr-2">
             <div className="space-y-4">
               <Card>
                 <CardContent className="p-6">
@@ -287,7 +287,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="configure" className="mt-4 h-full overflow-y-auto">
+          <TabsContent value="configure" className="mt-4 h-full overflow-y-auto pr-2">
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
@@ -396,7 +396,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="preview" className="mt-4 h-full overflow-y-auto">
+          <TabsContent value="preview" className="mt-4 h-full overflow-y-auto pr-2">
             <div className="space-y-4">
               {stats && (
                 <Card>
@@ -434,28 +434,26 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
                     <Badge variant="outline">{chunks.length} chunks</Badge>
                   </div>
                   
-                  <ScrollArea className="h-64 w-full border rounded-md p-4">
-                    <div className="space-y-4">
-                      {chunks.slice(0, 3).map((chunk, index) => (
-                        <div key={index} className="border-b pb-3 last:border-b-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="secondary" className="text-xs">
-                              Chunk {chunk.metadata.chunkIndex + 1}
+                  <div className="space-y-4">
+                    {chunks.map((chunk, index) => (
+                      <div key={index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Badge variant="secondary" className="text-xs">
+                            Chunk {chunk.metadata.chunkIndex + 1} of {chunk.metadata.totalChunks}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            {chunk.content.length} characters
+                          </span>
+                          {chunk.metadata.project && (
+                            <Badge variant="outline" className="text-xs">
+                              {chunk.metadata.project}
                             </Badge>
-                            <span className="text-xs text-gray-500">
-                              {chunk.content.length} characters
-                            </span>
-                          </div>
-                          <p className="text-sm line-clamp-3">{chunk.content}</p>
+                          )}
                         </div>
-                      ))}
-                      {chunks.length > 3 && (
-                        <p className="text-sm text-gray-500 text-center">
-                          ... and {chunks.length - 3} more chunks
-                        </p>
-                      )}
-                    </div>
-                  </ScrollArea>
+                        <p className="text-sm whitespace-pre-wrap">{chunk.content}</p>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
@@ -466,7 +464,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
 
         {/* Fixed action buttons at the bottom */}
         {activeTab === 'preview' && (
-          <div className="flex justify-end gap-2 pt-4 border-t">
+          <div className="flex justify-end gap-2 pt-4 pb-6 px-6 border-t bg-background">
             <Button variant="outline" onClick={() => setActiveTab('configure')}>
               Back
             </Button>
