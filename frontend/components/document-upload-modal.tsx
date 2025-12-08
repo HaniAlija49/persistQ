@@ -215,15 +215,15 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pb-4">
+      <DialogContent className="max-w-7xl h-[85vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
             Upload Document
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden px-6">
+        <div className="flex-1 min-h-0 px-6 overflow-y-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -235,7 +235,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="mt-4 h-full overflow-y-auto pr-2">
+          <TabsContent value="upload" className="mt-4 space-y-4">
             <div className="space-y-4">
               <Card>
                 <CardContent className="p-6">
@@ -287,7 +287,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="configure" className="mt-4 h-full overflow-y-auto pr-2">
+          <TabsContent value="configure" className="mt-4 space-y-4">
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
@@ -396,7 +396,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="preview" className="mt-4 h-full overflow-y-auto pr-2">
+          <TabsContent value="preview" className="mt-4 space-y-4">
             <div className="space-y-4">
               {stats && (
                 <Card>
