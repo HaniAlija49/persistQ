@@ -215,7 +215,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
@@ -223,7 +223,8 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
+        <div className="flex-1 overflow-hidden">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload</TabsTrigger>
             <TabsTrigger value="configure" disabled={!file}>
@@ -234,7 +235,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="mt-4">
+          <TabsContent value="upload" className="mt-4 h-full overflow-y-auto">
             <div className="space-y-4">
               <Card>
                 <CardContent className="p-6">
@@ -286,7 +287,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="configure" className="mt-4">
+          <TabsContent value="configure" className="mt-4 h-full overflow-y-auto">
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
@@ -395,7 +396,7 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
             </div>
           </TabsContent>
 
-          <TabsContent value="preview" className="mt-4">
+          <TabsContent value="preview" className="mt-4 h-full overflow-y-auto">
             <div className="space-y-4">
               {stats && (
                 <Card>
@@ -458,18 +459,23 @@ export function DocumentUploadModal({ open, onOpenChange, onSuccess }: DocumentU
                 </CardContent>
               </Card>
 
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setActiveTab('configure')}>
-                  Back
-                </Button>
-                <Button onClick={handleSave} className="min-w-32">
-                  <Save className="h-4 w-4 mr-2" />
-                  Save to Memories
-                </Button>
-              </div>
             </div>
           </TabsContent>
         </Tabs>
+        </div>
+
+        {/* Fixed action buttons at the bottom */}
+        {activeTab === 'preview' && (
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setActiveTab('configure')}>
+              Back
+            </Button>
+            <Button onClick={handleSave} className="min-w-32">
+              <Save className="h-4 w-4 mr-2" />
+              Save to Memories
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
