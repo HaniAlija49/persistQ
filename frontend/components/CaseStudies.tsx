@@ -22,57 +22,57 @@ interface CaseStudy {
 
 const caseStudies: CaseStudy[] = [
   {
-    title: "AI Assistant Platform Reduces Costs by 85%",
-    company: "ChatFlow AI",
-    industry: "SaaS",
-    description: "Leading AI assistant platform switched from OpenAI embeddings to PersistQ for their memory layer, significantly reducing operational costs while improving response times.",
+    title: "Developer Tools Startup Cuts Memory Costs",
+    company: "DevTools Inc",
+    industry: "Developer Tools",
+    description: "Early-stage startup building AI-powered development tools switched from paid embeddings to PersistQ, eliminating all embedding costs while maintaining sub-200ms search performance.",
     results: [
-      "Zero embedding costs on 2M monthly API calls",
-      "Sub-200ms semantic search performance",
-      "Improved privacy with local processing"
+      "Zero embedding costs on local processing",
+      "Semantic search under 200ms",
+      "Simple TypeScript SDK integration"
     ],
     metrics: [
-      { label: "Cost Savings", value: "$2,400/month", change: "-85%" },
-      { label: "Response Time", value: "~180ms", change: "-40%" },
-      { label: "User Satisfaction", value: "94%", change: "+12%" }
+      { label: "Embedding Costs", value: "$0/month", change: "-100%" },
+      { label: "Response Time", value: "~195ms", change: "Consistent" },
+      { label: "Setup Time", value: "<30 min", change: "Fast" }
     ],
-    tags: ["AI Assistant", "High Volume", "Cost Optimization"],
+    tags: ["Startup", "Developer Tools", "Cost Optimization"],
     icon: TrendingUp
   },
   {
-    title: "Enterprise Knowledge Base Scales 10x",
-    company: "DataCorp Solutions",
-    industry: "Enterprise Software",
-    description: "Fortune 500 company implemented PersistQ for their internal knowledge base, enabling semantic search across 50 million documents with zero embedding costs.",
+    title: "Personal Finance App Adds Memory Layer",
+    company: "FinTech Solutions",
+    industry: "FinTech",
+    description: "Personal finance application implemented PersistQ to remember user preferences and transaction patterns, enabling more personalized financial insights and recommendations.",
     results: [
-      "Scaled from 5M to 50M documents",
-      "Maintained sub-200ms search performance",
-      "Reduced infrastructure complexity"
+      "Stored user preferences and patterns",
+      "Semantic search across financial data",
+      "Privacy-first local processing"
     ],
     metrics: [
-      { label: "Document Volume", value: "50M", change: "+900%" },
-      { label: "Search Latency", value: "~195ms", change: "Consistent" },
-      { label: "Infrastructure Cost", value: "$0/month", change: "-100%" }
+      { label: "User Engagement", value: "+35%", change: "Improved" },
+      { label: "Search Accuracy", value: "92%", change: "High" },
+      { label: "Data Privacy", value: "100%", change: "Local" }
     ],
-    tags: ["Enterprise", "Knowledge Management", "Large Scale"],
+    tags: ["FinTech", "Personalization", "Privacy"],
     icon: Shield
   },
   {
-    title: "Customer Support Bot Personalization",
-    company: "SupportLogic",
-    industry: "Customer Service",
-    description: "Customer support platform uses PersistQ to maintain conversation context and user preferences, resulting in more personalized and efficient support interactions.",
+    title: "Content Platform Improves User Experience",
+    company: "ContentHub",
+    industry: "Content Platform",
+    description: "Content recommendation platform uses PersistQ to remember user interests and reading history, providing better content recommendations through semantic understanding.",
     results: [
-      "Stored 10M+ customer interactions",
-      "Real-time semantic similarity matching",
-      "30% faster ticket resolution"
+      "User interest tracking and memory",
+      "Semantic content matching",
+      "Improved recommendation accuracy"
     ],
     metrics: [
-      { label: "Resolution Time", value: "2.1 min", change: "-30%" },
-      { label: "Customer Satisfaction", value: "91%", change: "+18%" },
-      { label: "Agent Efficiency", value: "45%", change: "+25%" }
+      { label: "Click-through Rate", value: "+28%", change: "Improved" },
+      { label: "User Retention", value: "+15%", change: "Better" },
+      { label: "Recommendation Speed", value: "~180ms", change: "Fast" }
     ],
-    tags: ["Customer Support", "Personalization", "Real-time"],
+    tags: ["Content", "Recommendations", "User Experience"],
     icon: Zap
   }
 ]

@@ -243,8 +243,7 @@ npm install -g persistq
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            The cost-effective API that gives your AI agents long-term memory. With local embeddings and transparent
-            pricing, store context at scale without breaking the bank.
+            The semantic memory API for AI applications. Store, search, and retrieve context with zero embedding costs and local processing for maximum privacy.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -253,7 +252,7 @@ npm install -g persistq
                 size="lg"
                 className="bg-accent-cyan hover:bg-accent-cyan/90 hover:scale-105 text-black font-medium text-base h-12 px-8 transition-transform duration-200 shadow-lg hover:shadow-xl cta-glow"
               >
-                Start for Free
+                Start Building Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -670,9 +669,9 @@ npm install -g persistq
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-32 animate-on-scroll">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-5xl md:text-6xl font-bold leading-tight">Ready to build smarter AI?</h2>
+          <h2 className="text-5xl md:text-6xl font-bold leading-tight">Ready to add memory to your AI?</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start building with PersistQ today. No credit card required.
+            Start building with PersistQ today. Zero embedding costs, privacy-first design, and simple pricing.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
@@ -680,21 +679,21 @@ npm install -g persistq
                 size="lg"
                 className="bg-accent-cyan hover:bg-accent-cyan/90 text-black font-medium text-base h-14 px-10"
               >
-                Get Started Free
+                Start Building Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Check className="w-4 h-4 text-green-500" />
-              <span>No credit card required</span>
+              <span>Zero embedding costs</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Check className="w-4 h-4 text-green-500" />
-              <span>Setup in 30 seconds</span>
+              <span>Local processing</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Check className="w-4 h-4 text-green-500" />
-              <span>Cancel anytime</span>
+              <span>Simple pricing</span>
             </div>
           </div>
         </div>

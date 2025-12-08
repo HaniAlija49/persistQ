@@ -69,13 +69,31 @@ export default function InteractiveDemo() {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 800))
 
-    // Simulate semantic search results
-    const filtered = sampleMemories
-      .filter(memory =>
-        memory.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        memory.tags.some(tag => tag.includes(searchQuery.toLowerCase())) ||
-        memory.project.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    // Simulate semantic search with fuzzy matching
+    const queryTerms = searchQuery.toLowerCase().split(' ')
+
+    const scored = sampleMemories.map(memory => {
+      let score = 0
+
+      // Exact matches get higher scores
+      queryTerms.forEach(term => {
+        if (memory.content.toLowerCase().includes(term)) score += 3
+        if (memory.project.toLowerCase().includes(term)) score += 2
+        if (memory.tags.some(tag => tag.toLowerCase().includes(term))) score += 2
+
+        // Partial matches
+        if (memory.content.toLowerCase().includes(term.substring(0, 3))) score += 1
+      })
+
+      // Add some randomness to simulate semantic similarity
+      score += Math.random() * 0.5
+
+      return { ...memory, score }
+    })
+
+    const filtered = scored
+      .filter(memory => memory.score > 0)
+      .sort((a, b) => b.score - a.score)
       .slice(0, 3)
 
     setResults(filtered)
@@ -177,8 +195,8 @@ export default function InteractiveDemo() {
                           <p className="text-foreground leading-relaxed">
                             {memory.content}
                           </p>
-                          <div className={`text-sm font-medium ${getSimilarityColor(memory.similarity)}`}>
-                            {Math.round(memory.similarity * 100)}% match
+                          <div className={`text-sm font-medium ${getSimilarityColor(memory.score || memory.similarity)}`}>
+                            {Math.round((memory.score || memory.similarity) * 100)}% match
                           </div>
                         </div>
                         <div className="flex items-center justify-between">

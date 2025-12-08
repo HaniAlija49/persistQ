@@ -29,12 +29,12 @@ const specCategories: SpecCategory[] = [
   {
     title: "Infrastructure",
     icon: Server,
-    description: "Enterprise-grade infrastructure for maximum reliability",
+    description: "Modern, reliable infrastructure built for developers",
     specs: [
       { label: "Database", value: "PostgreSQL 15+", detail: "With pgvector extension" },
-      { label: "Vector Engine", value: "Transformers.js", detail: "Local embeddings" },
-      { label: "CDN", value: "Global edge network", detail: "50+ locations worldwide" },
-      { label: "Load Balancing", value: "Automatic", detail: "Health checks included" }
+      { label: "Vector Engine", value: "Transformers.js", detail: "Local embeddings (all-MiniLM-L6-v2)" },
+      { label: "Deployment", value: "Render (Vercel)", detail: "Managed infrastructure" },
+      { label: "Monitoring", value: "Highlight.io", detail: "Real-time error tracking" }
     ]
   },
   {
@@ -42,67 +42,67 @@ const specCategories: SpecCategory[] = [
     icon: Zap,
     description: "Optimized for real-time AI applications",
     specs: [
-      { label: "Search Latency", value: "<200ms", detail: "P99 response time" },
-      { label: "Concurrent Users", value: "10,000+", detail: "Per instance" },
-      { label: "Throughput", value: "50K req/sec", detail: "Burst capability" },
-      { label: "Cache Hit Rate", value: "95%+", detail: "With smart caching" }
+      { label: "Search Latency", value: "~200ms", detail: "Average response time" },
+      { label: "API Throughput", value: "Rate Limited", detail: "By plan tier" },
+      { label: "Embedding Speed", value: "<50ms", detail: "Local generation" },
+      { label: "Search Quality", value: "Semantic", detail: "Vector-based similarity" }
     ]
   },
   {
     title: "Security & Compliance",
     icon: Shield,
-    description: "Enterprise security standards and certifications",
+    description: "Privacy-first with enterprise-grade security",
     specs: [
       { label: "Data Encryption", value: "AES-256", detail: "At rest and in transit" },
-      { label: "Compliance", value: "GDPR, CCPA", detail: "SOC 2 Type II coming" },
-      { label: "Authentication", value: "API Key / OAuth 2.0", detail: "JWT tokens" },
-      { label: "Audit Logs", value: "Real-time", detail: "SIEM integration" }
+      { label: "Compliance", value: "GDPR, CCPA", detail: "Privacy by design" },
+      { label: "Authentication", value: "API Key / Clerk", detail: "Secure key management" },
+      { label: "Data Privacy", value: "Local Processing", detail: "Embeddings never leave" }
     ]
   },
   {
-    title: "Scalability",
+    title: "API Capabilities",
     icon: Database,
-    description: "Scale from startup to enterprise without architecture changes",
+    description: "Comprehensive REST API for memory operations",
     specs: [
-      { label: "Memory Storage", value: "Unlimited", detail: "Up to 1PB per customer" },
-      { label: "API Rate Limit", value: "Configurable", detail: "Burst support" },
-      { label: "Multi-region", value: "Active-active", detail: "Zero-downtime failover" },
-      { label: "Backups", value: "Point-in-time", detail: "7-day retention" }
+      { label: "Memory Storage", value: "JSON Metadata", detail: "Flexible schema" },
+      { label: "Search", value: "Semantic + Keyword", detail: "Hybrid search" },
+      { label: "Operations", value: "CRUD", detail: "Create, Read, Search, Delete" },
+      { label: "Usage Tracking", value: "Built-in", detail: "API call and memory quotas" }
     ]
   },
   {
-    title: "Global Availability",
+    title: "Integrations",
     icon: Globe,
-    description: "Worldwide infrastructure for minimal latency",
+    description: "Works with your existing development stack",
     specs: [
-      { label: "Regions", value: "15+", detail: "Across 6 continents" },
-      { label: "Uptime SLA", value: "99.9%", detail: "Premium: 99.99%" },
-      { label: "Data Locality", value: "Full control", detail: "Choose your region" },
-      { label: "Edge Caching", value: "Built-in", detail: "Automatic distribution" }
+      { label: "TypeScript SDK", value: "@persistq/sdk", detail: "Full type safety" },
+      { label: "MCP Support", value: "Yes", detail: "Claude Code integration" },
+      { label: "REST API", value: "OpenAPI", detail: "Standard HTTP endpoints" },
+      { label: "Billing", value: "Dodo Payments", detail: "Subscription management" }
     ]
   },
   {
-    title: "Privacy Features",
+    title: "Developer Experience",
     icon: Lock,
-    description: "Your data stays private with local processing",
+    description: "Built by developers, for developers",
     specs: [
-      { label: "Embedding Location", value: "Local", detail: "No third-party APIs" },
-      { label: "Data Residency", value: "Customer control", detail: "Choose storage location" },
-      { label: "Data Deletion", value: "Instant", detail: "Right to be forgotten" },
-      { label: "Private Cloud", value: "Available", detail: "On-premise option" }
+      { label: "Documentation", value: "Comprehensive", detail: "API reference + guides" },
+      { label: "SDK Support", value: "TypeScript", detail: "Full IntelliSense" },
+      { label: "Error Handling", value: "Detailed", detail: "Clear error messages" },
+      { label: "Monitoring", value: "Usage Stats", detail: "Real-time metrics" }
     ]
   }
 ]
 
-const enterpriseFeatures = [
-  "Dedicated account manager",
-  "Priority 24/7 support",
-  "Custom SLA agreements",
-  "Advanced analytics dashboard",
-  "Custom integrations support",
-  "On-premise deployment options",
-  "Training and onboarding",
-  "Custom embedding models"
+const developerFeatures = [
+  "Comprehensive TypeScript SDK",
+  "RESTful API with OpenAPI docs",
+  "Real-time usage monitoring",
+  "Flexible JSON metadata schema",
+  "Semantic search capabilities",
+  "Local embedding processing",
+  "Privacy-first design",
+  "Simple pricing structure"
 ]
 
 export default function TechnicalSpecs() {
@@ -168,12 +168,12 @@ export default function TechnicalSpecs() {
         {/* Enterprise Features */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           <div>
-            <h3 className="text-2xl font-bold mb-6">Enterprise Features</h3>
+            <h3 className="text-2xl font-bold mb-6">Developer Features</h3>
             <p className="text-muted-foreground mb-6">
-              Everything you need to deploy PersistQ at scale in your organization
+              Everything developers need to build intelligent AI applications with persistent memory
             </p>
             <div className="space-y-3">
-              {enterpriseFeatures.map((feature, index) => (
+              {developerFeatures.map((feature, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <Check className="w-4 h-4 text-green-500 shrink-0" />
                   <span className="text-sm">{feature}</span>
@@ -183,26 +183,26 @@ export default function TechnicalSpecs() {
           </div>
 
           <div className="bg-gradient-to-r from-accent-cyan/10 to-accent-purple/10 rounded-lg p-8 border border-accent-cyan/20">
-            <h3 className="text-xl font-bold mb-4">Need a Custom Solution?</h3>
+            <h3 className="text-xl font-bold mb-4">Simple, Transparent Pricing</h3>
             <p className="text-muted-foreground mb-6">
-              We offer flexible deployment options including on-premise, private cloud, and dedicated instances tailored to your specific requirements.
+              Focus on building your application, not managing infrastructure. Our straightforward pricing scales with your needs.
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-accent-cyan" />
-                <span className="text-sm">SOC 2 Type II certification (in progress)</span>
+                <span className="text-sm">Zero embedding costs forever</span>
               </div>
               <div className="flex items-center gap-3">
                 <Lock className="w-5 h-5 text-accent-purple" />
-                <span className="text-sm">HIPAA compliance available</span>
+                <span className="text-sm">Privacy-first by design</span>
               </div>
               <div className="flex items-center gap-3">
                 <Database className="w-5 h-5 text-accent-cyan" />
-                <span className="text-sm">Unlimited custom integrations</span>
+                <span className="text-sm">Scale from startup to enterprise</span>
               </div>
             </div>
             <Button size="lg" className="w-full mt-6 bg-accent-cyan hover:bg-accent-cyan/90 text-black">
-              Contact Enterprise Sales
+              Get Started Free
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>

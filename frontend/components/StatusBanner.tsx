@@ -105,7 +105,6 @@ export default function StatusBanner() {
             variant="ghost"
             size="sm"
             className="text-accent-cyan hover:text-accent-cyan/80 hover:bg-accent-cyan/10"
-            onClick={() => window.open('https://status.persistq.dev', '_blank')}
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             View Status Page
