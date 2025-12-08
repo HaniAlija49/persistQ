@@ -74,8 +74,12 @@ export class MemoryHubClient {
     useClerkAuth: boolean = false
   ): Promise<ApiResponse<T>> {
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
+    }
+    
+    // Only set Content-Type to application/json if not FormData
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
     }
 
     // For Clerk-protected routes (like /api/auth/clerk-link), use Clerk token
