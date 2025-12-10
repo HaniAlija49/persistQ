@@ -49,7 +49,7 @@ export default function GettingStartedPage() {
               </div>
               <div className="p-6 rounded-lg border border-border bg-surface">
                 <h3 className="font-semibold mb-2 text-accent-purple">MCP Server</h3>
-                <p className="text-sm text-muted-foreground mb-3">For Claude Code and GitHub Copilot CLI integration</p>
+                <p className="text-sm text-muted-foreground mb-3">For Claude Code, GitHub Copilot CLI, Cursor IDE, OpenCode IDE, and VS Code integration</p>
                 <code className="text-xs bg-background px-2 py-1 rounded">persistq</code>
               </div>
             </div>
@@ -76,21 +76,41 @@ export default function GettingStartedPage() {
             </div>
 
             <h3 className="text-xl font-semibold mt-8 mb-3">MCP Server (for AI tools)</h3>
-            <p className="text-muted-foreground mb-4">Install globally:</p>
+            <p className="text-muted-foreground mb-4">Use with npx (recommended):</p>
 
-            <div className="rounded-lg border border-border bg-surface p-4 mb-8 relative group">
+            <div className="rounded-lg border border-border bg-surface p-4 mb-4 relative group">
               <button
-                onClick={() => copyCode("npm install -g persistq", "mcp")}
+                onClick={() => copyCode("npx -y persistq", "npx")}
                 className="absolute top-4 right-4 p-2 rounded hover:bg-background transition-colors"
               >
-                {copiedSection === "mcp" ? (
+                {copiedSection === "npx" ? (
                   <Check className="w-4 h-4 text-accent-cyan" />
                 ) : (
                   <Copy className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
               <pre className="text-sm overflow-x-auto">
-                <code>npm install -g persistq</code>
+                <code>npx -y persistq</code>
+              </pre>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Or install globally:
+            </p>
+
+            <div className="rounded-lg border border-border bg-surface p-4 mb-8">
+              <pre className="text-sm overflow-x-auto">
+                <code>{`{
+  "mcpServers": {
+    "persistq": {
+      "command": "npx",
+      "args": ["-y", "persistq"],
+      "env": {
+        "PERSISTQ_URL": "https://memoryhub-cloud.onrender.com",
+        "PERSISTQ_API_KEY": process.env.PERSISTQ_API_KEY,
+      }
+    }
+  }
+}`}</code>
               </pre>
             </div>
 
@@ -106,7 +126,7 @@ export default function GettingStartedPage() {
             <div className="p-4 rounded-lg border border-border bg-accent-cyan/5 mb-8">
               <p className="text-sm">
                 <strong className="text-accent-cyan">Tip:</strong> Your API key starts with{" "}
-                <code className="bg-background px-2 py-1 rounded text-xs">mh_</code>
+                <code className="bg-background px-2 py-1 rounded text-xs">pq_</code>
               </p>
             </div>
 
@@ -264,7 +284,7 @@ if (memories.status === 'success' && memories.data) {
 
             <h2 className="text-2xl font-bold mt-12 mb-4">Quick Start: MCP Server</h2>
             <p className="text-muted-foreground mb-4">
-              For Claude Code or GitHub Copilot CLI users:
+              For Claude Code, GitHub Copilot CLI, Cursor IDE, OpenCode IDE, or VS Code users:
             </p>
 
             <h3 className="text-xl font-semibold mt-8 mb-3">1. Configure Claude Code</h3>

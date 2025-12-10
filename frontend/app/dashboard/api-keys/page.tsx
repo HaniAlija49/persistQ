@@ -102,7 +102,7 @@ export default function ApiKeysPage() {
           apiUrl={process.env.NEXT_PUBLIC_API_URL}
         />
 
-        <ApiKeyUsageGuide />
+        <DocumentationRedirect />
     </div>
   )
 }
@@ -194,91 +194,42 @@ function ApiKeyDisplay({ apiKey, isLoading }: { apiKey: string | null; isLoading
   )
 }
 
-function ApiKeyUsageGuide() {
+function DocumentationRedirect() {
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-foreground mb-4">Using Your API Key</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Use your API key to authenticate requests to the PersistQ API. Include it in the Authorization header of your requests.
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-sm font-medium text-foreground mb-2">cURL Example</h3>
-          <pre className="bg-surface p-4 rounded-md overflow-x-auto">
-            <code className="text-xs text-muted-foreground font-mono">
-{`curl -X POST https://your-backend.onrender.com/api/memory \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"content": "My first memory", "project": "demo"}'`}
-            </code>
-          </pre>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-foreground mb-2">JavaScript/TypeScript Example</h3>
-          <pre className="bg-surface p-4 rounded-md overflow-x-auto">
-            <code className="text-xs text-muted-foreground font-mono">
-{`const apiKey = 'YOUR_API_KEY'
-const apiUrl = 'https://your-backend.onrender.com'
-
-const response = await fetch(\`\${apiUrl}/api/memory\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${apiKey}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    content: 'My first memory',
-    project: 'demo',
-  }),
-})
-
-const data = await response.json()
-console.log(data)`}
-            </code>
-          </pre>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-foreground mb-2">Python Example</h3>
-          <pre className="bg-surface p-4 rounded-md overflow-x-auto">
-            <code className="text-xs text-muted-foreground font-mono">
-{`import requests
-
-api_key = 'YOUR_API_KEY'
-api_url = 'https://your-backend.onrender.com'
-
-response = requests.post(
-    f'{api_url}/api/memory',
-    headers={
-        'Authorization': f'Bearer {api_key}',
-        'Content-Type': 'application/json',
-    },
-    json={
-        'content': 'My first memory',
-        'project': 'demo',
-    },
-)
-
-data = response.json()
-print(data)`}
-            </code>
-          </pre>
-        </div>
-      </div>
-
       <div className="border border-border rounded-lg p-6 bg-surface/30">
-        <h3 className="text-sm font-medium text-foreground mb-2">API Endpoints</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li><code className="text-xs bg-surface px-2 py-1 rounded">POST /api/memory</code> - Create a memory</li>
-          <li><code className="text-xs bg-surface px-2 py-1 rounded">GET /api/memory/list</code> - List all memories</li>
-          <li><code className="text-xs bg-surface px-2 py-1 rounded">POST /api/memory/search</code> - Semantic search</li>
-          <li><code className="text-xs bg-surface px-2 py-1 rounded">GET /api/memory/stats</code> - Get statistics</li>
-          <li><code className="text-xs bg-surface px-2 py-1 rounded">DELETE /api/memory/:id</code> - Delete a memory</li>
-        </ul>
+        <h2 className="text-xl font-semibold text-foreground mb-4">API Documentation</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Ready to use your API key? We have comprehensive documentation to help you get started quickly.
+        </p>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          <a 
+            href="/docs/getting-started"
+            className="block p-4 rounded-lg border border-border bg-background hover:border-accent-cyan transition-colors"
+          >
+            <h3 className="font-semibold mb-2 text-accent-cyan">🚀 Getting Started</h3>
+            <p className="text-sm text-muted-foreground">
+              Learn how to integrate PersistQ into your application in under 5 minutes
+            </p>
+          </a>
+          
+          <a 
+            href="/docs/api-reference"
+            className="block p-4 rounded-lg border border-border bg-background hover:border-accent-purple transition-colors"
+          >
+            <h3 className="font-semibold mb-2 text-accent-purple">📚 API Reference</h3>
+            <p className="text-sm text-muted-foreground">
+              Complete reference for all REST API endpoints and usage examples
+            </p>
+          </a>
+        </div>
+        
+        <div className="mt-4 p-4 rounded-lg border border-accent-cyan/30 bg-accent-cyan/5">
+          <p className="text-sm">
+            <strong className="text-accent-cyan">Quick Tip:</strong> Your API key starts with <code className="bg-background px-2 py-1 rounded text-xs">pq_</code> and should be kept secure.
+          </p>
+        </div>
       </div>
     </div>
   )

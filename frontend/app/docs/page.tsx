@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { SharedHeader } from "@/components/shared-header"
-import { BookOpen, Code2, Lightbulb, ArrowRight, Terminal, Puzzle } from "lucide-react"
+import { BookOpen, Code2, Lightbulb, ArrowRight, Terminal, Puzzle, Brain } from "lucide-react"
 
 export default function DocsPage() {
   return (
@@ -70,6 +70,23 @@ export default function DocsPage() {
             </p>
             <div className="flex items-center gap-2 text-accent-cyan font-medium">
               Setup MCP
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
+
+          <Link
+            href="/docs/anthropic-skills"
+            className="p-8 rounded-lg border border-border bg-surface hover:border-accent-purple transition-colors group"
+          >
+            <div className="w-12 h-12 rounded-lg bg-accent-purple/10 flex items-center justify-center mb-4 group-hover:bg-accent-purple/20 transition-colors">
+              <Brain className="w-6 h-6 text-accent-purple" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">Anthropic Skills</h3>
+            <p className="text-muted-foreground mb-4">
+              Use PersistQ as the memory layer for Anthropic Skills with intelligent storage and recall
+            </p>
+            <div className="flex items-center gap-2 text-accent-purple font-medium">
+              Learn Skills integration
               <ArrowRight className="w-4 h-4" />
             </div>
           </Link>
@@ -155,6 +172,26 @@ export default function DocsPage() {
                 <li>
                   <Link href="/docs/api-reference#list-memories" className="hover:text-foreground">
                     List Memories
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-lg">Anthropic Skills</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link href="/docs/anthropic-skills#memory-operations" className="hover:text-foreground">
+                    Memory Operations
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/docs/anthropic-skills#complete-skill-example" className="hover:text-foreground">
+                    Skill Example
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/docs/anthropic-skills#best-practices" className="hover:text-foreground">
+                    Best Practices
                   </Link>
                 </li>
               </ul>
