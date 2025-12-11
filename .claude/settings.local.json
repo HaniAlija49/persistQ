@@ -16,7 +16,8 @@
       "Bash(npm pack:*)",
       "Bash(npm publish)",
       "Bash(cat:*)",
-      "mcp__persistq__add_memory"
+      "mcp__persistq__add_memory",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []
