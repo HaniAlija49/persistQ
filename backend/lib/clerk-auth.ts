@@ -26,8 +26,6 @@ export async function getClerkUserId(request?: NextRequest): Promise<string | nu
       if (allowUnverifiedFlag && isProduction) {
         console.warn('[Auth] CLERK_ALLOW_UNVERIFIED_JWT is ignored in production')
       }
-      const issuer =
-        process.env.CLERK_JWT_ISSUER_DOMAIN || process.env.CLERK_ISSUER || undefined
       const audience = process.env.CLERK_JWT_AUDIENCE || undefined
 
       // Verify the JWT signature unless explicitly bypassed (e.g., local dev)
@@ -42,9 +40,18 @@ export async function getClerkUserId(request?: NextRequest): Promise<string | nu
 
           const verified = await verifyToken(token, {
             secretKey,
-            issuer,
             audience,
           })
+
+          const issuer =
+            process.env.CLERK_JWT_ISSUER_DOMAIN || process.env.CLERK_ISSUER
+          if (issuer && verified.iss !== issuer) {
+            console.error(
+              `[Auth] Clerk token issuer mismatch: expected ${issuer}, got ${verified.iss}`
+            )
+            return null
+          }
+
           return verified.sub || null
         } catch (error) {
           console.error(

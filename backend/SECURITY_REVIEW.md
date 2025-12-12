@@ -20,7 +20,7 @@ The API registration and key management flows persist full API keys in the datab
 `getClerkUserId` now verifies Authorization bearer tokens against the Clerk secret key before trusting them. Unsigned decoding is only allowed when `CLERK_ALLOW_UNVERIFIED_JWT=true`, giving local development an explicit opt-in while keeping verification on by default in production.
 
 **Evidence**
-- Authorization tokens are verified via Clerk's backend `verifyToken` with the configured secret key, issuer, and audience. Unsigned decoding only occurs when the explicit bypass flag is enabled and `NODE_ENV` is not `production`. A production `CLERK_ALLOW_UNVERIFIED_JWT` flag is ignored with a warning. 【F:backend/lib/clerk-auth.ts†L3-L72】
+- Authorization tokens are verified via Clerk's backend `verifyToken` with the configured secret key and optional audience check, and the issuer claim is validated after verification (missing or mismatched issuers are rejected when an issuer is configured). Unsigned decoding only occurs when the explicit bypass flag is enabled and `NODE_ENV` is not `production`. A production `CLERK_ALLOW_UNVERIFIED_JWT` flag is ignored with a warning. 【F:backend/lib/clerk-auth.ts†L3-L76】
 
 **Residual Recommendations**
 - Keep `CLERK_ALLOW_UNVERIFIED_JWT` disabled in all deployed environments; if a bypass is needed locally, scope it to non-production configs only.
