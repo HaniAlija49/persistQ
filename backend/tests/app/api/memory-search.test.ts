@@ -11,6 +11,7 @@ vi.mock('@/app/_utils/app-router-sentry.config', () => ({ withSentryTracing: (fn
 
 vi.mock('@/lib/auth', () => ({
   validateApiKey: vi.fn(async () => ({ id: 'user-1' })),
+  authenticate: vi.fn(async () => ({ user: { id: 'user-1' }, method: 'api_key' })),
   AuthError: class AuthError extends Error { statusCode = 401 },
 }))
 

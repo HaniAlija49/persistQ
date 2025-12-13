@@ -23,6 +23,7 @@ vi.mock('@/lib/prisma', () => ({ prisma: prismaMock as any }))
 
 vi.mock('@/lib/auth', () => ({
   validateApiKey: vi.fn(async () => ({ id: 'user-1' })),
+  authenticate: vi.fn(async () => ({ user: { id: 'user-1' }, method: 'api_key' })),
   AuthError: class AuthError extends Error { statusCode = 401 },
 }))
 

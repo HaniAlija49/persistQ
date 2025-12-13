@@ -39,6 +39,7 @@ vi.mock('@/lib/embeddings', () => ({
 class MockAuthError extends Error { statusCode = 401 }
 vi.mock('@/lib/auth', () => ({
   validateApiKey: vi.fn(async () => ({ id: 'user-1' })),
+  authenticate: vi.fn(async () => ({ user: { id: 'user-1' }, method: 'api_key' })),
   AuthError: MockAuthError,
 }))
 
