@@ -47,4 +47,8 @@ export type {
   HealthCheckResponse,
   PortalUrlResponse,
   CheckoutResponse,
+  DocumentChunk,
+  ProcessingStats,
+  ProcessDocumentParams,
+  ProcessDocumentResponse,
 } from './types'
