@@ -98,17 +98,39 @@ pull_code() {
     log_info "Pulling latest code from git..."
     cd "$BACKEND_ROOT"
 
-    # Stash any local changes
+    # Stash any local changes (e.g. Caddyfile domain edits).
+    # Important: re-apply after pull so deployments use your local config.
+    local stashed="false"
+    local stash_ref=""
     if ! git diff-index --quiet HEAD --; then
-        log_warn "Local changes detected, stashing..."
-        git stash
+        log_warn "Local changes detected, stashing temporarily..."
+        git stash push -u -m "memoryhub-deploy-$(date +%Y%m%d_%H%M%S)" >/dev/null || {
+            log_error "Failed to stash local changes"
+            exit 1
+        }
+        stashed="true"
+        stash_ref="$(git stash list -1 | cut -d: -f1)"
     fi
 
     # Pull latest
     git pull origin master || {
         log_error "Failed to pull latest code"
+        if [ "$stashed" = "true" ] && [ -n "$stash_ref" ]; then
+            log_warn "Restoring stashed changes after pull failure..."
+            git stash pop "$stash_ref" >/dev/null || log_warn "Failed to auto-restore stash; run: git stash list && git stash pop"
+        fi
         exit 1
     }
+
+    # Re-apply stashed changes (so deploy uses your local config files)
+    if [ "$stashed" = "true" ] && [ -n "$stash_ref" ]; then
+        log_info "Restoring stashed local changes..."
+        git stash pop "$stash_ref" >/dev/null || {
+            log_error "Failed to re-apply stashed changes (resolve conflicts, then re-run deploy)"
+            log_error "Run: git status && git stash list"
+            exit 1
+        }
+    fi
 
     log_info "Code updated successfully"
 }
