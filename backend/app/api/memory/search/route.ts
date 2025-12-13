@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateApiKey, AuthError } from '@/lib/auth'
+import { authenticate, AuthError } from '@/lib/auth'
 import { searchMemories } from '@/lib/search'
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils'
 import { searchMemorySchema, validateRequest } from '@/lib/validation'
@@ -8,11 +8,12 @@ import { enforceQuota } from '@/lib/billing/quotas'
 
 export const POST = withSentryTracing(async function POST(request: NextRequest) {
   try {
-    // Authenticate user
-    const user = await validateApiKey()
+    // Authenticate user (supports both Clerk and API key)
+    const { user, method } = await authenticate(request)
 
-    // Check API call quota
-    const quotaError = await enforceQuota(user.id, 'api_call')
+    // Check API call quota (only track if using API key, not Clerk auth)
+    const shouldTrack = method === 'api_key'
+    const quotaError = await enforceQuota(user.id, 'api_call', shouldTrack)
     if (quotaError) {
       return NextResponse.json(
         { error: quotaError.error, usage: quotaError.usage },

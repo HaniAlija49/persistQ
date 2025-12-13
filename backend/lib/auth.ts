@@ -4,12 +4,26 @@ import { User } from '@prisma/client'
 import { checkRateLimit } from './ratelimit'
 import bcrypt from 'bcrypt'
 import { Redis } from '@upstash/redis'
+import { authenticateRequest } from './clerk-auth-helper'
 
 export class AuthError extends Error {
   constructor(message: string, public statusCode: number = 401) {
     super(message)
     this.name = 'AuthError'
   }
+}
+
+/**
+ * Authentication method used for the request
+ */
+export type AuthMethod = 'api_key' | 'clerk'
+
+/**
+ * Result of authentication including method used
+ */
+export interface AuthResult {
+  user: User
+  method: AuthMethod
 }
 
 const BCRYPT_ROUNDS = 10
@@ -121,6 +135,56 @@ export async function validateApiKey(): Promise<User> {
     }
     console.error('Error validating API key:', error)
     throw new AuthError('Authentication failed', 500)
+  }
+}
+
+/**
+ * Unified authentication supporting both Clerk (frontend) and API key (external)
+ *
+ * Priority:
+ * 1. Try Clerk authentication (cookie or Bearer token with Clerk JWT)
+ * 2. Fall back to API key authentication
+ *
+ * Returns user and the authentication method used.
+ * This allows callers to track usage only for external API key calls.
+ */
+export async function authenticate(request?: Request): Promise<AuthResult> {
+  // Try Clerk authentication first (frontend dashboard calls)
+  const clerkAuth = await authenticateRequest(request || new Request('http://localhost'))
+
+  if (clerkAuth.userId) {
+    // Get user from Clerk ID
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: clerkAuth.userId },
+    })
+
+    if (user) {
+      // Check rate limit
+      const rateLimitResult = await checkRateLimit(user.id)
+      if (!rateLimitResult.success) {
+        throw new AuthError(
+          `Rate limit exceeded. Try again in ${rateLimitResult.reset ? Math.ceil((rateLimitResult.reset - Date.now()) / 1000) : 60} seconds`,
+          429
+        )
+      }
+
+      return {
+        user,
+        method: 'clerk',
+      }
+    }
+  }
+
+  // Fall back to API key authentication (external calls via MCP, SDK, etc.)
+  try {
+    const user = await validateApiKey()
+    return {
+      user,
+      method: 'api_key',
+    }
+  } catch (error) {
+    // If both auth methods fail, throw auth error
+    throw new AuthError('Unauthorized - please provide valid Clerk session or API key', 401)
   }
 }
 

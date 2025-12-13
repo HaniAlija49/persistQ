@@ -1,15 +1,16 @@
-import { NextResponse } from 'next/server'
-import { validateApiKey, AuthError } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
+import { authenticate, AuthError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { enforceQuota } from '@/lib/billing/quotas'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Validate API key and get user
-    const user = await validateApiKey()
+    // Authenticate user (supports both Clerk and API key)
+    const { user, method } = await authenticate(request)
 
-    // Check API call quota
-    const quotaError = await enforceQuota(user.id, 'api_call')
+    // Check API call quota (only track if using API key, not Clerk auth)
+    const shouldTrack = method === 'api_key'
+    const quotaError = await enforceQuota(user.id, 'api_call', shouldTrack)
     if (quotaError) {
       return NextResponse.json(
         { error: quotaError.error, usage: quotaError.usage },

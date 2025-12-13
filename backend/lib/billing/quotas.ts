@@ -215,15 +215,20 @@ export async function getUsage(userId: string): Promise<{
 /**
  * Check if user has enough quota and track usage in a single operation
  * This is the recommended way to enforce quotas
+ *
+ * @param userId - User ID to check quota for
+ * @param resource - Resource type to check
+ * @param shouldTrack - Whether to track usage (default: true). Set to false for frontend calls.
  */
 export async function checkAndTrackQuota(
   userId: string,
-  resource: QuotaResource
+  resource: QuotaResource,
+  shouldTrack: boolean = true
 ): Promise<QuotaCheckResult> {
   const result = await checkQuota(userId, resource);
 
-  // If allowed and it's an API call, track it
-  if (result.allowed && resource === "api_call") {
+  // If allowed and it's an API call, track it (only if shouldTrack is true)
+  if (result.allowed && resource === "api_call" && shouldTrack) {
     // Track asynchronously (don't await) to not slow down the request
     trackApiCall(userId).catch((error) => {
       console.error("[Quota] Error tracking quota:", error);
@@ -236,12 +241,17 @@ export async function checkAndTrackQuota(
 /**
  * Middleware-friendly quota checker
  * Returns null if quota is OK, or error response if quota exceeded
+ *
+ * @param userId - User ID to check quota for
+ * @param resource - Resource type to check
+ * @param shouldTrack - Whether to track usage (default: true). Set to false for frontend calls.
  */
 export async function enforceQuota(
   userId: string,
-  resource: QuotaResource
+  resource: QuotaResource,
+  shouldTrack: boolean = true
 ): Promise<{ status: number; error: string; usage?: any } | null> {
-  const result = await checkAndTrackQuota(userId, resource);
+  const result = await checkAndTrackQuota(userId, resource, shouldTrack);
 
   if (!result.allowed) {
     return {
