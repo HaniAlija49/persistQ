@@ -27,7 +27,7 @@
  */
 
 // Export the client class and factory function
-export { MemoryHubClient, createClient } from './client'
+export { PersistQClient, createClient } from './client'
 
 // Export all types
 export type {
@@ -36,7 +36,7 @@ export type {
   SearchResult,
   ApiResponse,
   PaginatedResponse,
-  MemoryHubConfig,
+  PersistQConfig,
   CreateMemoryParams,
   UpdateMemoryParams,
   ListMemoriesParams,
