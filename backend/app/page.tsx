@@ -22,10 +22,10 @@ export default function Home() {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <a
-            href="/api/status"
+            href="/status"
             className="px-8 py-3 bg-[#00e0ff] text-black font-semibold rounded-lg hover:bg-[#00e0ff]/90 transition-colors"
           >
-            API Status
+            System Status
           </a>
           <a
             href="https://persistq.com/docs"
