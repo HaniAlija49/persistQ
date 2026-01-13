@@ -1,0 +1,62 @@
+# MemoryHub Backend - Coolify Docker Compose
+# This docker-compose file is designed for Coolify deployments
+# Coolify provides Traefik proxy with automatic SSL, so no Caddy needed
+
+services:
+  backend:
+    image: memoryhub-backend:latest
+    container_name: memoryhub-backend
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    # No port mapping needed - Coolify/Traefik handles this
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    restart: unless-stopped
+    healthcheck:
+      # Check if Next.js server responds (any non-5xx response means server is up)
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000',(r)=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    # Resource limits for budget VPS (optional but recommended)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    # Log rotation configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # ML model caching - persist model downloads
+    volumes:
+      - model-cache:/app/.cache
+    # Traefik labels for Coolify
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.gzip.compress: "true"
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: "https"
+      traefik.http.routers.http-0-memoryhub.entryPoints: "http"
+      traefik.http.routers.http-0-memoryhub.middlewares: "redirect-to-https,gzip"
+      traefik.http.routers.http-0-memoryhub.rule: "Host(`api.yourdomain.com`)"
+      traefik.http.routers.http-0-memoryhub.service: "http-0-memoryhub"
+      traefik.http.routers.https-0-memoryhub.entryPoints: "https"
+      traefik.http.routers.https-0-memoryhub.middlewares: "gzip"
+      traefik.http.routers.https-0-memoryhub.rule: "Host(`api.yourdomain.com`)"
+      traefik.http.routers.https-0-memoryhub.service: "http-0-memoryhub"
+      traefik.http.routers.https-0-memoryhub.tls: "true"
+      traefik.http.routers.https-0-memoryhub.tls.certresolver: "letsencrypt"
+      traefik.http.services.http-0-memoryhub.loadbalancer.server.port: "3000"
+
+volumes:
+  model-cache:
+    driver: local
