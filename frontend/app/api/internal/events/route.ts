@@ -47,12 +47,16 @@ export async function POST(request: NextRequest) {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
 
     try {
+      // Forward the original request headers to maintain authentication
+      const requestHeaders = Object.fromEntries(request.headers.entries());
+      
       await fetch(`${backendUrl}/api/internal/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...requestHeaders, // Forward all original headers including auth
         },
-        body: JSON.stringify({ userId, event }),
+        body: JSON.stringify({ event }), // Only send event, backend will get user from auth
       });
     } catch (backendError) {
       // Silently fail if backend is unreachable
